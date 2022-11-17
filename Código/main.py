@@ -1,4 +1,5 @@
 import pygame
+import colores as col
 
 
 pygame.init()
@@ -7,6 +8,9 @@ ALTO = 400
 screen = pygame.display.set_mode((ANCHO, ALTO)) #Crear una pantalla
 pygame.display.set_caption("Título") #Título
 clock = pygame.time.Clock()
+
+
+
 
 # Funciones
 def cargar_inicio():
@@ -23,15 +27,15 @@ def cargar_inicio():
     # Textos
     dic_textos = {}
 
-    titulo = fuente_titulo.render("Insertar Título", False, "White")
+    titulo = fuente_titulo.render("Title placeholder", False, col.color_green)
     titulo_rect = titulo.get_rect(center = (400,170))
     tupla_titulo = (titulo, titulo_rect)
 
-    int_nombre = fuente_general.render("Introduce tu nombre: ", False, "White")
+    int_nombre = fuente_general.render("Introduce tu nombre: ", False, col.color_white)
     int_nombre_rect = int_nombre.get_rect(midright = (500,340))
     tupla_int_nombre = (int_nombre, int_nombre_rect)
 
-    int_dificultad = fuente_general.render("Inserte la dificultad: ", False, "White")
+    int_dificultad = fuente_general.render("Inserte la dificultad: ", False, col.color_white)
     int_dificultad_rect = int_dificultad.get_rect(midright = (500,340))
     tupla_int_dificultad = (int_dificultad, int_dificultad_rect)
 
@@ -48,12 +52,12 @@ def cargar_inicio():
 
 def inicio_bucle(dic_menu, estado_local):
     if estado_local == "nombre":
-        screen.fill("Black")
+        screen.fill(col.color_black)
         screen.blit(dic_menu["textos"]["titulo"][0], dic_menu["textos"]["titulo"][1])
         screen.blit(dic_menu["textos"]["int_nombre"][0], dic_menu["textos"]["int_nombre"][1])
         int_string(string)
     if estado_local == "dificultad":
-        screen.fill("Black")
+        screen.fill(col.color_black)
         screen.blit(dic_menu["textos"]["titulo"][0], dic_menu["textos"]["titulo"][1])
         screen.blit(dic_menu["textos"]["int_dificultad"][0], dic_menu["textos"]["int_dificultad"][1])
         int_string(string)   
@@ -95,11 +99,12 @@ dic_menu = cargar_inicio()
 
 string = ""
 
-while True:
+
+running = True
+while running:
     for evento in pygame.event.get(): #Para revisar todas las posibles interacciones
         if evento.type == pygame.QUIT:
-            pygame.quit() #Es lo contrario a crear una pantalla y da error con .update
-            exit() #Necesario
+            running = False
         if estado == "inicio":
             int_string_evento(evento)
     if estado == "inicio":
