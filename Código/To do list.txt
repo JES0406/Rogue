@@ -1,0 +1,31 @@
+To do list:
+Título
+menu: 
+1. Botones o
+2. Recibir y procesar datos o
+3. Diseñar menu x
+
+Juego:
+1. Sistema de movimiento o
+2. Sistema de colisiones x
+3. Sprites x
+4. Sistema de animación x
+5. Sistema de disparo x
+6. Sistema de vida x
+7. Sistema de puntuación x
+8. Pathfinding o
+9. generación de enemigos x
+
+Instrucciones:
+1. Menú explicativo x
+
+Clases:
+1. Clase jugador x
+2. Clase enemigo o
+3. Cambios en las estadísticas x
+4. Clase jefe x
+
+Fin del juego:
+1. Menú de fin de juego x
+2. Menú de puntuación x
+3. Perks por ganar x
