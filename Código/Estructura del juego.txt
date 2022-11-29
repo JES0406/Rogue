@@ -1,0 +1,109 @@
+Estructura del juego
+
+El juego se divide en 4 pantallas:
+
+Pantalla de inicio: en la que se puede elegir entre jugar, ver las instrucciones o salir del juego. 
+    Tras iniciarlo, pide el nombre del jugador y muestra un botón para elegir la dificultad
+        Comienza el juego
+
+Pantalla de juego: Muestra una lista de las clases
+    1- Programador (Mago)
+        1- Youtuber
+        2- Python
+            1- String concatenado
+            2- DRYn't
+            3- Outstanding   
+        3- Hacker
+    2- Físico (Melee)
+        1- Relativo
+        2- Fórmulas
+        3- Electromagnetismo
+    3- Matemático (Ranged)
+        1- Álgebra
+        2- Geometría
+        3- Calculo
+        4- Estadístico
+    4- Religioso (Healer y  summoner)
+        1- Abuela con cojones
+        2- Budista
+
+Pantalla de instrucciones: Muestra las instrucciones y objetivos del juego
+
+Pantalla de fin: Muestra el nombre del jugador, su puntuación y la de los Top 10
+
+Funcionamiento del juego
+
+Se elige una clase que determinará tus ataques y estadísticas
+Aparecerán distintos enemigos que al matarlos te darán experiencia
+Cuando llegues a una cantidad de experiencia determinada, subirás de nivel
+    Cada 5 niveles, podrás elegir una habilidad
+        Cada habilidad tiene un efecto y cooldown
+    El resto, se eligirá una estadística a subir
+
+Fin del juego:
+    Cuando el jugador muera, se mostrará la pantalla de fin
+    El objetivo es terminar primero, que será tras matar al jefe final que aparece tras la "semana de examenes", un periodo en el que los enemigos son más fuertes y numerosos
+
+Enemigos:
+    Los enemigos se dividirán en 4 tipos:
+        1- Enemigos melee
+        2- Enemigos Ranged
+        3- Enemigos Tanque
+        4- Profesores
+
+Melee:
+Vida: 100
+Daño: 10
+Velocidad: 1
+Rango: 1
+
+Ranged:
+Vida: 50
+Daño: 20
+Velocidad: 2
+Rango: 3
+
+Tanque:
+Vida: 200
+Daño: 5
+Velocidad: 0.5
+Rango: 1
+
+Profesores:
+    Progra:
+        Vida: 1000
+        Daño: 10
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Día de practicas: Summon de profesores de práctica: vida: 10 daño: 10 velocidad: 4 rango: 1
+    Física:
+        Vida: 1000
+        Daño: 25
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Corrección amable: Bajada temporal de estadísticas
+    Cálculo:
+        Vida: 1000
+        Daño: 0
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Distancias infinitas: Debes de ir al espacio designado
+    Estadística:
+        Vida: 1000
+        Daño: 25
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Bostezo: Reduce tu daño y velocidad
+    Religión:
+        Vida: 1000
+        Daño: 0
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Ser muy nazi con el móvil: Roba uno de tus objetivos
+    Álgebra:
+        Vida: 1000
+        Daño: 0
+        Velocidad: 0
+        Rango: 4
+        Habilidad: Espacio dual: Demuestra todo su conocimiento permitiendo el viaje intertemporal y se la pela
+
