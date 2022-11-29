@@ -4,8 +4,8 @@ pygame.init
 
 print('Espacio para hacer que aparezca un enemigo al azar')
 ### Player variables
-pwidth = 15
-pheight = 15
+pwidth = 32
+pheight = 32
 playerpos = [20, 20]
 pspeed = 5
 mov_r = False
@@ -29,7 +29,7 @@ class enemy:
     def __init__(self, speed, range, position:tuple, type):
         self.type = type
         self.speed = speed
-        self.range = range
+        self.range = range + pwidth
         self.position = [position[0], position[1]]
         global enemy_id
         self.id = enemy_id
@@ -43,16 +43,16 @@ class enemy:
             ranged_espeed_vector = -self.speed
         elif abs(distance - self.range) < self.speed: ranged_espeed_vector = 0 
         else: ranged_espeed_vector = self.speed
-        if self.position[0] < target[0]: self.position[0] += ranged_espeed_vector
-        elif self.position[0] > target[0]: self.position[0] -= ranged_espeed_vector
-        if self.position[1] < target[1]: self.position[1] += ranged_espeed_vector
-        elif self.position[1] > target[1]: self.position[1] -= ranged_espeed_vector
+        if self.position[0] < self.speed + target[0]: self.position[0] += ranged_espeed_vector
+        elif self.position[0] > self.speed + target[0]: self.position[0] -= ranged_espeed_vector
+        if self.position[1] < self.speed + target[1]: self.position[1] += ranged_espeed_vector
+        elif self.position[1] > self.speed + target[1]: self.position[1] -= ranged_espeed_vector
 
 
 def addenemy(which:int):
     global enemy_list
     if which == 0: enemy_list.append(enemy(speed = 2.5, range = 20, position = (random.randint(0, swidth - pwidth), random.randint(0, sheight- pheight)), type = which))
-    if which == 1: enemy_list.append(enemy(speed = 1, range = 200, position = (random.randint(0, swidth - pwidth), random.randint(0, sheight- pheight)), type = which))
+    if which == 1: enemy_list.append(enemy(speed = 2.5, range = 200, position = (random.randint(0, swidth - pwidth), random.randint(0, sheight- pheight)), type = which))
 
     
 
@@ -92,7 +92,10 @@ while run:
             if event.key == pygame.K_SPACE:
                 addenemy(random.randint(0,1))
                 print(len(enemy_list))
-
+            if event.key == pygame.K_TAB:
+                for i in range(300):
+                    addenemy(random.randint(0,1))
+                    print(len(enemy_list))
 
         ### Stop moving here
         elif event.type == pygame.KEYUP:
