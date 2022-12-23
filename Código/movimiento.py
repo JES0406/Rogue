@@ -1,4 +1,5 @@
 import pygame, math, random
+from constantes import *
 pygame.init
 
 
@@ -51,26 +52,12 @@ class enemy:
 
 def addenemy(which:int):
     global enemy_list
-    if which == 0: enemy_list.append(enemy(speed = 2.5, range = 20, position = (random.randint(0, swidth - pwidth), random.randint(0, sheight- pheight)), type = which))
-    if which == 1: enemy_list.append(enemy(speed = 2.5, range = 200, position = (random.randint(0, swidth - pwidth), random.randint(0, sheight- pheight)), type = which))
+    if which == 0: enemy_list.append(enemy(speed = 2.5, range = 20, position = (random.randint(0, ANCHO - pwidth), random.randint(0, ALTO- pheight)), type = which))
+    if which == 1: enemy_list.append(enemy(speed = 2.5, range = 200, position = (random.randint(0, ANCHO - pwidth), random.randint(0, ALTO- pheight)), type = which))
 
     
-
-### Clock
-fps = 60
-fpsclock = pygame.time.Clock()
-
-###Colours
-color_white = '#fcfaf9'
-color_black = '#333333'
-color_green = '#48E5C2'
-color_red = '#ce5e5e'
-
 ### Screen
-swidth = 600
-sheight = 600
 bgcolor = color_black
-screen = pygame.display.set_mode((swidth, sheight))
 pygame.display.set_caption('game.py')
 color_list = [color_red, color_white]
 
@@ -111,9 +98,9 @@ while run:
     moving_speed = setspeed()
     ### Actual movement of the player
     if mov_l and playerpos[0] > 0: playerpos[0] -= moving_speed
-    if mov_r and playerpos [0] < swidth - pwidth: playerpos[0] += moving_speed
+    if mov_r and playerpos [0] < ANCHO - pwidth: playerpos[0] += moving_speed
     if mov_u and playerpos[1] > 0: playerpos[1] -= moving_speed
-    if mov_d and playerpos[1] < sheight - pheight: playerpos[1] += moving_speed
+    if mov_d and playerpos[1] < ALTO - pheight: playerpos[1] += moving_speed
 
 
     pygame.draw.rect(screen, color_green, pygame.Rect(playerpos[0], playerpos[1], pwidth, pheight), width = 0)
@@ -123,6 +110,6 @@ while run:
 
     #pygame.display.update()
     pygame.display.flip()
-    fpsclock.tick(fps)
+    clock.tick(fps)
 
 pygame.quit()
