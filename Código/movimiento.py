@@ -1,6 +1,6 @@
 import pygame, math, random
 from constantes import *
-pygame.init
+pygame.init()
 
 
 print('Espacio para hacer que aparezca un enemigo al azar')
@@ -48,6 +48,8 @@ class enemy:
         elif self.position[0] > self.speed + target[0]: self.position[0] -= ranged_espeed_vector
         if self.position[1] < self.speed + target[1]: self.position[1] += ranged_espeed_vector
         elif self.position[1] > self.speed + target[1]: self.position[1] -= ranged_espeed_vector
+
+
 
 
 def addenemy(which:int):
