@@ -63,6 +63,8 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
+                    player = pygame.sprite.GroupSingle()
+                    player.add(Player(clase))
                     nombre_state = False
                     juego_state = True
                 if event.key == pygame.K_BACKSPACE:
@@ -147,9 +149,8 @@ while running:
 
 
     elif juego_state:
-        screen.fill(color_black)
-        player = pygame.sprite.GroupSingle()
-        player.add(Player(clase))
+        screen.fill(color_white)
+        player.update()
         player.draw(screen)
 
     elif end_state:

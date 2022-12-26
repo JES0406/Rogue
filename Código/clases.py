@@ -32,29 +32,56 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (ANCHO//2, ALTO//2))
         if class_chosen == "Caballero": 
             self.speed = 4
-            self.HP = 100
+            self.MaxHP = 100
             self.hitpoint = 10
-            self.regen = 1
+            self.HPregen = 0.1
             self.range = 10
-            self.mana = 0
+            self.MaxMana = 0
         elif class_chosen == "Mago": 
             self.speed = 2
-            self.HP = 60
+            self.MaxHP = 60
             self.hitpoint = 20
-            self.regen = 1
+            self.HPregen = 0.1
             self.range = 60
-            self.mana = 250
+            self.MaxMana = 250
         elif class_chosen == "Arquero": 
             self.speed = 6
-            self.HP = 40
+            self.MaxHP = 40
             self.hitpoint = 20
-            self.regen = 0.5
+            self.HPregen = 0.05
             self.range = 60
-            self.mana = 0
+            self.MaxMana = 0
         elif class_chosen == "Curandero": 
             self.speed = 4
-            self.HP = 80
+            self.MaxHP = 80
             self.hitpoint = 5
-            self.regen = 2
+            self.HPregen = 0.2
             self.range = 60
-            self.mana = 100
+            self.MaxMana = 100
+
+        self.Manaregen = 0.2
+        # self.HP = self.MaxHP
+        # self.Mana = self.MaxMana
+        self.HP = 20
+        self.Mana = 0
+        
+    def health_bar(self):
+        pygame.draw.rect(screen, color_red, (self.rect.x, self.rect.y - 10, self.rect.width, 5))
+        pygame.draw.rect(screen, color_green, (self.rect.x, self.rect.y - 10, self.rect.width * (self.HP/self.MaxHP), 5))
+
+    def mana_bar(self):
+        try:
+            pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 5, self.rect.width, 5))
+            pygame.draw.rect(screen, color_blue, (self.rect.x, self.rect.y - 5, self.rect.width * (self.Mana/self.MaxMana), 5))
+        except ZeroDivisionError:
+            pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 5, self.rect.width, 5))
+
+    
+    def update(self):
+        self.health_bar()
+        self.mana_bar()
+        if self.HP < self.MaxHP:
+            self.HP += self.HPregen
+        if self.Mana < self.MaxMana:
+            self.Mana += self.Manaregen
+        

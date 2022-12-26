@@ -4,6 +4,7 @@ color_black = '#333333'
 color_green = '#48e5c2'
 color_white = '#fcfaf9'
 color_red = '#ce5e5e'
+color_blue = '#5e9ece'
 # Propiedades
 ANCHO = 800
 ALTO = 600
