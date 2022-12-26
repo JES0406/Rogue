@@ -107,4 +107,3 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
-        
