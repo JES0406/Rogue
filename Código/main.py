@@ -12,6 +12,7 @@ inicio_state = True
 class_state = False
 nombre_state = False
 juego_state = False
+level_up = False
 clase = "Caballero"
 
 def hide():
@@ -64,7 +65,9 @@ while running:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
                     player = pygame.sprite.GroupSingle()
-                    player.add(Player(clase))
+                    user = Player(clase)
+                    player.add(user)
+                    choice = ""
                     nombre_state = False
                     juego_state = True
                 if event.key == pygame.K_BACKSPACE:
@@ -77,11 +80,18 @@ while running:
 
         elif juego_state:
             ### Start moving here
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    escena = 1
-                    juego_state = False
-                    end_state = True
+            if level_up_state:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        level_up_state = False
+                    choice += event.unicode.upper()
+            else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        escena = 1
+                        juego_state = False
+                        end_state = True
+                
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
@@ -149,9 +159,24 @@ while running:
 
 
     elif juego_state:
+        print(user.level, user.exp, user.exp_to_level)
         screen.fill(color_white)
-        player.update()
-        player.draw(screen)
+        if user.exp >= user.exp_to_level:
+            level_up_state= True
+            user.level += 1
+            user.exp_to_level = 100 * user.level + user.exp_to_level
+        if level_up_state:
+            fn.background("level_up")
+            user.level_up(choice)
+            count = 0
+            if count == 60:
+                level_up_state = False
+                count = 0
+            else:
+                count += 1
+        else:
+            player.update()
+            player.draw(screen)
 
     elif end_state:
         if escena == 1:

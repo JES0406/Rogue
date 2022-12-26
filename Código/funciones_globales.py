@@ -43,6 +43,10 @@ def background(state_str, role = None):
         else:
             fondo = pygame.transform.scale(pygame.image.load("Graphics/Fondos/nombre.png").convert_alpha(), (ANCHO, ALTO))
         screen.blit(fondo, (0,0))
+    
+    elif state_str == "level_up":
+        fondo = pygame.transform.scale(pygame.image.load("Graphics/Fondos/level_up.jpg").convert_alpha(), (ANCHO, ALTO))
+        screen.blit(fondo, (0,0))
 
 # Imagenes
 

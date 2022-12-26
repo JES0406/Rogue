@@ -60,10 +60,11 @@ class Player(pygame.sprite.Sprite):
             self.MaxMana = 100
 
         self.Manaregen = 0.2
-        # self.HP = self.MaxHP
-        # self.Mana = self.MaxMana
-        self.HP = 20
-        self.Mana = 0
+        self.exp = 0
+        self.level = 0
+        self.HP = self.MaxHP
+        self.Mana = self.MaxMana
+        self.exp_to_level = 100 * self.level
         
     def health_bar(self):
         pygame.draw.rect(screen, color_red, (self.rect.x, self.rect.y - 10, self.rect.width, 5))
@@ -76,7 +77,28 @@ class Player(pygame.sprite.Sprite):
         except ZeroDivisionError:
             pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 5, self.rect.width, 5))
 
-    
+    def level_up(self, choice):
+            if choice == "HP":
+                self.MaxHP += 10
+                self.HP += 10
+                self.HPregen += 0.01
+            elif choice == "Mana":
+                self.MaxMana += 10
+                self.Mana += 10
+                self.Manaregen += 0.01
+            elif choice == "Speed":
+                self.speed += 0.2
+            elif choice == "Damage":
+                self.hitpoint += 1
+            
+
+    def exp_bar(self):
+        try:
+            pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
+            pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width * (self.exp/self.exp_to_level), 5))
+        except ZeroDivisionError:
+            pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
+
     def update(self):
         self.health_bar()
         self.mana_bar()
@@ -84,4 +106,5 @@ class Player(pygame.sprite.Sprite):
             self.HP += self.HPregen
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
+        self.exp_bar()
         
