@@ -1,9 +1,9 @@
 To do list:
-Título
+Título o
 menu: 
 1. Botones o
 2. Recibir y procesar datos o
-3. Diseñar menu x
+3. Diseñar menu o
 
 Juego:
 1. Sistema de movimiento o
@@ -16,16 +16,12 @@ Juego:
 8. Pathfinding o
 9. generación de enemigos x
 
-Instrucciones:
-1. Menú explicativo x
-
 Clases:
-1. Clase jugador x
-2. Clase enemigo o
+1. Clase jugador o
+2. Clase enemigo x
 3. Cambios en las estadísticas x
 4. Clase jefe x
 
 Fin del juego:
-1. Menú de fin de juego x
-2. Menú de puntuación x
-3. Perks por ganar x
+1. Menú de fin de juego o
+2. Menú de puntuación o
