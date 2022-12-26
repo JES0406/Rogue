@@ -1,6 +1,7 @@
 import pygame, sys, random, math, time, os
 import funciones_globales as fn 
 from constantes import *
+from clases import Player
 
 
 pygame.init()
@@ -71,7 +72,23 @@ while running:
                 else:
                     if len(nombre_str) < LONGITUD_NOMBRE:
                         nombre_str += event.unicode.upper()
-                
+
+        elif juego_state:
+            ### Start moving here
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    escena = 1
+                    juego_state = False
+                    end_state = True
+
+        elif end_state:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if escena == 2:
+                        end_state = False
+                    else:
+                        escena += 1
+                    
 
 
     if inicio_state:
@@ -119,6 +136,39 @@ while running:
         class_rect = class_image.get_rect(center = (170, 150))
         screen.blit(class_image, class_rect)
         fn.text(f"Como te llamas?", (220, 150), 40)
+
+        pygame.draw.rect(screen, color_black, (25, 300, ANCHO-40, 285), border_radius=20)
+        pygame.draw.rect(screen, color_white, (35, 310, ANCHO-60, 265), border_radius=20)
+        counter = 0
+        while counter < 3:
+            for i in range (0, 9):
+                fn.text(f"{abecedario[i+counter*9]}", (50 + i*85, 360 + counter*85), 55)
+            counter += 1
+
+
+    elif juego_state:
+        screen.fill(color_black)
+        player = pygame.sprite.GroupSingle()
+        player.add(Player(clase))
+        player.draw(screen)
+
+    elif end_state:
+        if escena == 1:
+            screen.fill(color_green)
+            fn.text_box(show)
+            fn.admins(True, (400, 500), True, (400, 500))
+            fn.text(f"Gracias por jugar a iMAT", (100, 530),20)
+            fn.text(f"Esperamos que te haya gustado.", (100, 550), 20)
+            fn.text(f"Presiona ENTER para ver tus estadisticas.", (100, 570), 20)
+
+            hide()
+        elif escena == 2:
+            screen.fill(color_white)
+            pygame.draw.rect(screen, color_black, (110, 90, 580, 200), border_radius=20)
+            pygame.draw.rect(screen, color_white, (120, 100, 560, 180), border_radius=20)
+            fn.text(f"Estadisticas:", (220, 150), 40)
+            fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
+            fn.text(f"Clase: {clase}", (220, 250), 40)
         
 
 
