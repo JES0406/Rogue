@@ -1,7 +1,7 @@
 import pygame, sys, random, math, time, os
 import funciones_globales as fn 
 from constantes import *
-from clases import Player
+from clases import Player, Button
 
 
 pygame.init()
@@ -27,10 +27,20 @@ def hide():
 
 show = True
 
+bushes = pygame.sprite.Group()
+
+for i in range(10):
+    bush_pos = (random.randint(0, ANCHO), random.randint(0, ALTO))
+    bush = pygame.sprite.Sprite(bushes)
+    bush.image = pygame.transform.scale(pygame.image.load("Graphics/Fondos/Decoration/bush_1.png"), (100, 80))
+    bush.rect = bush.image.get_rect(center = bush_pos)
+    
+
+
 contador = 0
 while running:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+        if event.type == pygame.QUIT:
             running = False
         if inicio_state:
             if event.type == pygame.KEYDOWN:
@@ -46,18 +56,22 @@ while running:
                     if escena == 2:
                         class_state = False
                         nombre_state = True
-                        n = random.randint(1, 4)
-                        if n == 1:
-                            clase = "Caballero"
-                        elif n == 2:
-                            clase = "Mago"
-                        elif n == 3:
-                            clase = "Arquero"
-                        elif n == 4:
-                            clase = "Curandero"
-                        c = 0
+                        if clase == "":
+                            n = random.randint(1, 4)
+                            if n == 1:
+                                clase = "Caballero"
+                            elif n == 2:
+                                clase = "Mago"
+                            elif n == 3:
+                                clase = "Arquero"
+                            elif n == 4:
+                                clase = "Curandero"
+                            c = 0
                     else:
                         escena += 1
+                if event.key == pygame.K_ESCAPE:
+                    inicio_state = True
+                    class_state = False
 
         elif nombre_state:
             if event.type == pygame.KEYDOWN:
@@ -70,10 +84,13 @@ while running:
                     choice = ""
                     nombre_state = False
                     juego_state = True
-                if event.key == pygame.K_BACKSPACE:
+                elif event.key == pygame.K_BACKSPACE:
                     nombre_str = nombre_str[:-1]
                 elif event.key == pygame.K_SPACE:
                     nombre_str += "  "
+                elif event.key == pygame.K_ESCAPE:
+                    class_state = True
+                    nombre_state = False
                 else:
                     if len(nombre_str) < LONGITUD_NOMBRE:
                         nombre_str += event.unicode.upper()
@@ -118,9 +135,15 @@ while running:
         if escena == 1:
             fn.background("class")
             fn.text_box(show)
-            fn.admins(True,(600, 500), False, (0, 500))
             fn.text(f"Tras pulsar en la clase que quieras podrás empezar", (100, 530),20)
-            fn.classes()
+            button_list = fn.classes()
+            fn.admins(True,(600, 500), False, (0, 500)) 
+            for button in button_list:
+                if button.rect.collidepoint(pygame.mouse.get_pos()):
+                    if pygame.mouse.get_pressed()[0]:
+                        # print(button.name)
+                        clase = button.name
+                        escena = 2           
 
             hide()
 
@@ -152,15 +175,18 @@ while running:
         pygame.draw.rect(screen, color_black, (25, 300, ANCHO-40, 285), border_radius=20)
         pygame.draw.rect(screen, color_white, (35, 310, ANCHO-60, 265), border_radius=20)
         counter = 0
+        letter_buttons = []
         while counter < 3:
             for i in range (0, 9):
-                fn.text(f"{abecedario[i+counter*9]}", (50 + i*85, 360 + counter*85), 55)
+                letter_button = Button((50 + i*82, 330 + counter*82), (60,60), abecedario[i+ 9*counter], color_white, color_green, color_green, 55)
+                letter_buttons.append(letter_button)
+                letter_buttons[i+ 9*counter].update()
+                fn.text(f"{abecedario[i + 9*counter]}", (50 + i*82, 350 + counter*82), 55)
             counter += 1
-
-
     elif juego_state:
         print(user.level, user.exp, user.exp_to_level)
-        screen.fill(color_white)
+        fn.background("game")
+        bushes.draw(screen)
         if user.exp >= user.exp_to_level:
             level_up_state= True
             user.level += 1

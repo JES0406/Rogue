@@ -11,7 +11,7 @@ running = True
 
 
 
-fonts = ["fuente.ttf"]
+fonts = ["Código/button - copia/fuente.ttf"]
 
 
 
@@ -30,7 +30,7 @@ class Button():
         mousepos = pygame.mouse.get_pos()
         if mousepos[0] > self.pos[0] and mousepos[0] < self.pos[0] + self.size[0]:
             if mousepos[1] > self.pos[1] and mousepos[1] < self.pos[1] + self.size[1]: self.hovering = True
-        pygame.draw.rect(screen,self.color[self.hovering],self.rect)
+        pygame.draw.rect(screen,self.color[self.hovering],self.rect, border_radius=10)
         screen.blit(self.text_surface, (self.pos[0],self.pos[1] + 20))
 
 
