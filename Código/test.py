@@ -18,9 +18,44 @@ javi_rect = javi.get_rect(bottomright = (400,500))
 
 
 
+def background():
+    screen.blit(pygame.image.load("Graphics/Fondos/fondo.png"), (0,0))
 
+def text_box():
+    pygame.draw.rect(screen, (255,255,255), (0,500,800,100))
 
+def text(texto, posicion):
+    fuente = pygame.font.Font(None, 30)
+    texto = fuente.render(texto, True, (0,0,0))
+    screen.blit(texto, posicion)
 
+def hiding():
+    global show
+    global contador
+    global contador2
+    if show:
+        contador += 1
+        if contador == 300:
+            show = False
+            contador = 0
+    else:
+        contador2 += 1
+        if contador2 == 300:
+            show = True
+            contador2 = 0
+
+    if show:
+        screen.blit(pygame.image.load("Graphics/Fondos/fondo.png"), (0,0))
+        screen.blit(marcos, marcos_rect)
+        screen.blit(javi, javi_rect)
+        text_box()
+        text(f"Hola, somos Marcos y Javi, los creadores de este juego.", (400, 530))
+        text(f"Esperamos que te guste.", (400, 570))
+    else:
+        screen.blit(pygame.image.load("Graphics/Fondos/fondo.png"), (0,0))
+        screen.blit(marcos, marcos_rect)
+        screen.blit(javi, javi_rect)
+        text_box()
 
 
 

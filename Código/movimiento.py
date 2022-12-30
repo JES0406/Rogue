@@ -27,7 +27,7 @@ def update_camera_pos():
     camera_left_top[1] = min(max(ALTO / 2, playerpos[1] - ALTO / 2), mapheight - ALTO/2)
 
 def relative_pos(position, coordinate:int) -> int: 
-    return position[coordinate] - get_camera_centre()[coordinate]
+    return position[coordinate] - camera_left_top[coordinate]
 
 def draw_minimap():
     pygame.draw.rect(screen, 'White', pygame.Rect(0,0,ANCHO / 4 + 2, ALTO / 4 +2))
