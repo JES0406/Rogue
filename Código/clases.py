@@ -81,11 +81,9 @@ class Player(pygame.sprite.Sprite):
     def level_up(self, choice):
             if choice == "HP":
                 self.MaxHP += 10
-                self.HP += 10
                 self.HPregen += 0.01
             elif choice == "Mana":
                 self.MaxMana += 10
-                self.Mana += 10
                 self.Manaregen += 0.01
             elif choice == "Speed":
                 self.speed += 0.2
