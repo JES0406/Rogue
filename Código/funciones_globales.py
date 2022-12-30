@@ -46,7 +46,7 @@ def background(state_str, role = None):
     elif state_str == "game":
         string = "desierto.jpg"
     elif state_str == "level_up":
-        string = "level_up.jpg"
+        string = "level_up.png"
         
 
     fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (ANCHO, ALTO))

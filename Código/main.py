@@ -201,23 +201,38 @@ while running:
                 fn.text(f"{abecedario[i + 9*counter]}", (50 + i*82, 350 + counter*82), 55)
             counter += 1
         for button in letter_buttons:
+
             if button.rect.collidepoint(pygame.mouse.get_pos()):
                 if pygame.mouse.get_pressed()[0]:
                     if len(nombre_str) < LONGITUD_NOMBRE:
                         nombre_str += button.name
     elif juego_state:
-        print(user.exp, user.exp_to_level, user.level, user.HP)
+        print(user)
         fn.background("game")
         bushes.draw(screen)
         if user.exp >= user.exp_to_level:
             level_up_state= True
+            user.exp -= user.exp_to_level
             user.level += 1
             user.exp_to_level = 100 * user.level + user.exp_to_level
         if level_up_state:
             fn.background("level_up")
-            user.level_up(choice)
+            HP_button = Button((50, 400), (120, 80), "HP", color_green, color_green_2, color_black)
+            Mana_button = Button((225, 400), (120, 80), "Mana", color_blue, color_blue_2, color_black)
+            speed_button = Button((425, 400), (120, 80), "Speed", color_yellow, color_yellow_2, color_black)
+            damage_button = Button((600, 400), (120, 80), "Damage", color_red, color_red_2, color_black)
+            
+            button_list = [HP_button, Mana_button, speed_button, damage_button]
+            for button in button_list:
+                button.update()
+                if button.rect.collidepoint(pygame.mouse.get_pos()):
+                    if pygame.mouse.get_pressed()[0]:
+                        choice = button.name
+                        user.level_up(choice)
+                        level_up_state = False
+                        choice = ""
             count = 0
-            if count == 60:
+            if count == 20:
                 level_up_state = False
                 count = 0
             else:
@@ -244,10 +259,10 @@ while running:
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
                 enemy_timer = 0
                 
-            player.update()
             enemeies.update(user)
-            player.draw(screen)
             enemeies.draw(screen)
+            player.update()
+            player.draw(screen)
 
     elif end_state:
         if escena == 1:

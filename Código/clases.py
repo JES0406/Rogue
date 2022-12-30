@@ -109,7 +109,9 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
-        self.exp += 0.1
+    
+    def __str__(self) -> str:
+        return f"HP: {self.HP} Mana: {self.Mana} Speed: {self.speed} Damage: {self.hitpoint} Range: {self.range} Level: {self.level}, Exp: {self.exp}"
 
 class Button():
     def __init__(self, left_top:tuple, width_height:tuple, text = 'Menu', color1 = '#823999', color2 = '#182300', text_color = 'White'):
@@ -134,44 +136,46 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, type):
         pygame.sprite.Sprite.__init__(self)
         if type == "Melee":
+            self.HP = 100
             self.range = 10
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (80, 80))
             self.speed = 1
         elif type == "Ranged":
+            self.HP = 50
             self.range = 100
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
             self.speed = 2
         self.position = [pos[0], pos[1]]
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         self.size = self.image.get_size()
+        self.range += self.size[0]
         
         
 
     
     def move(self, player):
         # move towards player but stay in range
-        
-        if self.position[0] + self.range + self.size[0] < player.position[0]:
-            self.position[0] += self.speed
-        elif self.position[0] - self.range - self.size[0] > player.position[0]:
-            self.position[0] -= self.speed
-        elif self.position[0] + self.range + self.size[0] > player.position[0]:
-            self.position[0] += self.speed
-        elif self.position[0] - self.range - self.size[0] < player.position[0]:
-            self.position[0] -= self.speed
-        if self.position[1] + self.range + self.size[1] < player.position[1]:
-            self.position[1] += self.speed
-        elif self.position[1] - self.range - self.size[1] > player.position[1]:
-            self.position[1] -= self.speed
-        elif self.position[1] + self.range + self.size[1] > player.position[1]:
-            self.position[1] += self.speed
-        elif self.position[1] - self.range - self.size[1] < player.position[1]:
-            self.position[1] -= self.speed
+        distance_x = player.position[0] - self.position[0]
+        distance_y = player.position[1] - self.position[1]
+        distance = math.sqrt(distance_x**2 + distance_y **2)
+        if distance < self.range: 
+            ranged_espeed_vector = -self.speed
+        elif abs(distance - self.range) < self.speed: ranged_espeed_vector = 0 
+        else: ranged_espeed_vector = self.speed
+        if self.position[0] < self.speed + player.position[0]: self.position[0] += ranged_espeed_vector
+        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= ranged_espeed_vector
+        if self.position[1] < self.speed + player.position[1]: self.position[1] += ranged_espeed_vector
+        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= ranged_espeed_vector
 
 
     def update(self, player):
         self.move(player)
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
+        if self.HP <= 0:
+            self.kill()
+            player.exp += 10
+        self.HP -= 1
+            
 
 
 
