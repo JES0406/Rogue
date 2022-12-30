@@ -31,8 +31,6 @@ Fin del juego:
 1. Animaciones 
 2. Movimiento
 3. Disparos
-4. Menu de pausa
-5. Integrar los Botones
 6. Fondos
 9. Sistema de puntuación
 10. Numeros

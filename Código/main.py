@@ -1,7 +1,7 @@
 import pygame, sys, random, math, time, os
 import funciones_globales as fn 
 from constantes import *
-from clases import Player, Button
+from clases import Player, Button, Enemy
 
 
 pygame.init()
@@ -13,7 +13,9 @@ class_state = False
 nombre_state = False
 juego_state = False
 level_up = False
-clase = "Caballero"
+pausa_state = False
+clase = ""
+enemy_list = []
 
 def hide():
     global show, contador
@@ -56,6 +58,7 @@ while running:
                     if escena == 2:
                         class_state = False
                         nombre_state = True
+                    else:
                         if clase == "":
                             n = random.randint(1, 4)
                             if n == 1:
@@ -67,7 +70,6 @@ while running:
                             elif n == 4:
                                 clase = "Curandero"
                             c = 0
-                    else:
                         escena += 1
                 if event.key == pygame.K_ESCAPE:
                     inicio_state = True
@@ -82,6 +84,8 @@ while running:
                     user = Player(clase)
                     player.add(user)
                     choice = ""
+                    enemy_timer = 0
+                    enemeies = pygame.sprite.Group()
                     nombre_state = False
                     juego_state = True
                 elif event.key == pygame.K_BACKSPACE:
@@ -108,6 +112,16 @@ while running:
                         escena = 1
                         juego_state = False
                         end_state = True
+                    if event.key == pygame.K_ESCAPE:
+                        pausa_state = True
+                    if event.key == pygame.K_UP:
+                        user.rotate("up")
+                    if event.key == pygame.K_DOWN:
+                        user.rotate("down")
+                    if event.key == pygame.K_LEFT:
+                        user.rotate("left")
+                    if event.key == pygame.K_RIGHT:
+                        user.rotate("right")
                 
 
         elif end_state:
@@ -153,7 +167,10 @@ while running:
             fn.admins(False, (0, 500), True, (600, 500))
             fn.text(f"OsTrAs...", (100, 550), 60)
             fn.text(f"Casi se nos olvida.", (350, 560), 20)
-
+            fn.text(f"Clase: {clase}", (150, 150), 20)
+            class_image = fn.chosen_sprite(clase)
+            class_rect = class_image.get_rect(center = (210, 210))
+            screen.blit(class_image, class_rect)
             hide()
 
     elif nombre_state:
@@ -178,13 +195,18 @@ while running:
         letter_buttons = []
         while counter < 3:
             for i in range (0, 9):
-                letter_button = Button((50 + i*82, 330 + counter*82), (60,60), abecedario[i+ 9*counter], color_white, color_green, color_green, 55)
+                letter_button = Button((35 + i*82, 310 + counter*82), (70,70), abecedario[i+ 9*counter], color_white, color_gray_1)
                 letter_buttons.append(letter_button)
                 letter_buttons[i+ 9*counter].update()
                 fn.text(f"{abecedario[i + 9*counter]}", (50 + i*82, 350 + counter*82), 55)
             counter += 1
+        for button in letter_buttons:
+            if button.rect.collidepoint(pygame.mouse.get_pos()):
+                if pygame.mouse.get_pressed()[0]:
+                    if len(nombre_str) < LONGITUD_NOMBRE:
+                        nombre_str += button.name
     elif juego_state:
-        print(user.level, user.exp, user.exp_to_level)
+        print(user.exp, user.exp_to_level, user.level, user.HP)
         fn.background("game")
         bushes.draw(screen)
         if user.exp >= user.exp_to_level:
@@ -200,9 +222,32 @@ while running:
                 count = 0
             else:
                 count += 1
+        elif pausa_state:
+            pygame.draw.rect(screen, color_black, (140, 90, 580, ALTO - 150), border_radius=20)
+            pygame.draw.rect(screen, color_white, (150, 100, 560, ALTO - 170), border_radius=20)
+            fn.text(f"PAUSA", (350, 150), 60)
+            continue_button = Button((160, 200), (500, 100), "Continuar", color_white, color_gray_2, color_black)   
+            continue_button.update()
+            if continue_button.rect.collidepoint(pygame.mouse.get_pos()):
+                if pygame.mouse.get_pressed()[0]:
+                    pausa_state = False
+            exit_button = Button((160, 350), (500, 100), "Guardar y Salir", color_white, color_gray_2, color_black)
+            exit_button.update()
+            if exit_button.rect.collidepoint(pygame.mouse.get_pos()):
+                if pygame.mouse.get_pressed()[0]:
+                    running = False
+            
         else:
+            enemy_timer += 1
+            if enemy_timer == 60:
+                enemy_pos = (random.randint(0, ALTO- 50), random.randint(0, ANCHO - 100))
+                enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
+                enemy_timer = 0
+                
             player.update()
+            enemeies.update(user)
             player.draw(screen)
+            enemeies.draw(screen)
 
     elif end_state:
         if escena == 1:

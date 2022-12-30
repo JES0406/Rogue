@@ -65,7 +65,7 @@ def admins(marcos, pos_marcos, javi, pos_javi):
         screen.blit(javi, javi_rect)
 
 def classes():
-    knight_buttom = ClassButton((120, 120), (570, 100), "Caballero", color_white, color_gray_1, color_white, 20)
+    knight_buttom = Button((120, 120), (570, 100), "Caballero", color_white, color_gray_1, color_white)
     knight_buttom.update()
     knight = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (80, 80))
     knight_rect = knight.get_rect(midright = (195, 160))
@@ -73,7 +73,7 @@ def classes():
     text(f"Caballero: Personaje melee", (195, 160), 20)
     text(f"Mucha vida y dano medio.", (300, 180), 20)
 
-    archer_buttom = ClassButton((120, 220), (570, 100), "Arquero", color_white, color_gray_1, color_white, 20)
+    archer_buttom = Button((120, 220), (570, 100), "Arquero", color_white, color_gray_1, color_white)
     archer_buttom.update()
     archer = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
     archer_rect = archer.get_rect(midright = (195, 260))
@@ -81,7 +81,7 @@ def classes():
     text(f"Arquero: Personaje a distancia", (195, 260), 20)
     text(f"Vida baja y dano muy alto.", (300, 280), 20)
 
-    mage_buttom = ClassButton((120, 320), (570, 100), "Mago", color_white, color_gray_1, color_white, 20)
+    mage_buttom = Button((120, 320), (570, 100), "Mago", color_white, color_gray_1, color_white)
     mage_buttom.update()
     mage = pygame.transform.scale(pygame.image.load("Graphics/Clases/mage.png").convert_alpha(), (80, 80))
     mage_rect = mage.get_rect(midright = (195, 360))
@@ -89,7 +89,7 @@ def classes():
     text(f"Mago: Personaje a distancia", (195, 360), 20)
     text(f"Vida media y dano alto.", (300, 380), 20)
 
-    healer_buttom = ClassButton((120, 420), (570, 80), "Curandero", color_white, color_gray_1, color_white, 20)
+    healer_buttom = Button((120, 420), (570, 80), "Curandero", color_white, color_gray_1, color_white)
     healer_buttom.update()
     healer = pygame.transform.scale(pygame.image.load("Graphics/Clases/healer.png").convert_alpha(), (80, 80))
     healer_rect = healer.get_rect(midright = (195, 460))
@@ -114,4 +114,6 @@ def chosen_sprite(choice):
         class_image = pygame.transform.scale(pygame.image.load("Graphics/Clases/healer.png").convert_alpha(), (100, 100))
 
     return class_image
+
+
 

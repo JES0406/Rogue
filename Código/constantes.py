@@ -6,6 +6,7 @@ color_white = '#fcfaf9'
 color_red = '#ce5e5e'
 color_blue = '#5e9ece'
 color_gray_1 = '#f2f2f2'
+color_gray_2 = '#e6e6e6'
 # Propiedades
 ANCHO = 800
 ALTO = 600
@@ -16,4 +17,5 @@ LONGITUD_NOMBRE = 10
 
 # Listas importantes
 abecedario = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
+enemy_types = ["Melee", "Ranged"]
 

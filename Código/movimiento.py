@@ -35,6 +35,7 @@ class enemy:
         global enemy_id
         self.id = enemy_id
         enemy_id += 1
+        
     def move(self, target:list):
             ### Ranged enemy movement
         distance_x = target[0] - self.position[0]
