@@ -101,7 +101,7 @@ while running:
 
         elif juego_state:
             ### Start moving here
-            if level_up_state:
+            if level_up:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         level_up_state = False
@@ -116,8 +116,6 @@ while running:
                         pausa_state = True
                     if event.key == pygame.K_UP:
                         user.rotate("up")
-                    if event.key == pygame.K_DOWN:
-                        user.rotate("down")
                     if event.key == pygame.K_LEFT:
                         user.rotate("left")
                     if event.key == pygame.K_RIGHT:
