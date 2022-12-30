@@ -25,7 +25,6 @@ def update_camera_pos():
     global camera_left_top
     camera_left_top[0] = min(max(0, playerpos[0] - (ANCHO / 2)), mapwidth - ANCHO)
     camera_left_top[1] = min(max(0, playerpos[1] - (ALTO / 2)), mapheight - ALTO)
-    print(camera_left_top)
 
 def relative_pos(position, coordinate:int) -> int: 
     return position[coordinate] - camera_left_top[coordinate]
