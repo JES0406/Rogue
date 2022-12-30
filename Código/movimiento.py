@@ -23,8 +23,9 @@ def get_camera_centre(): return (camera_left_top[0] + ANCHO/2, camera_left_top[1
 
 def update_camera_pos():
     global camera_left_top
-    camera_left_top[0] = min(max(ANCHO / 2, playerpos[0] - ANCHO / 2), mapwidth - ANCHO/2)
-    camera_left_top[1] = min(max(ALTO / 2, playerpos[1] - ALTO / 2), mapheight - ALTO/2)
+    camera_left_top[0] = min(max(0, playerpos[0] - (ANCHO / 2)), mapwidth - ANCHO)
+    camera_left_top[1] = min(max(0, playerpos[1] - (ALTO / 2)), mapheight - ALTO)
+    print(camera_left_top)
 
 def relative_pos(position, coordinate:int) -> int: 
     return position[coordinate] - camera_left_top[coordinate]
@@ -32,7 +33,9 @@ def relative_pos(position, coordinate:int) -> int:
 def draw_minimap():
     pygame.draw.rect(screen, 'White', pygame.Rect(0,0,ANCHO / 4 + 2, ALTO / 4 +2))
     pygame.draw.rect(screen, 'Black', pygame.Rect(0,0,ANCHO / 4, ALTO / 4))
-    pygame.draw.rect(screen, 'White', pygame.Rect(playerpos[0]/8,playerpos[1]/8,pheight/8, pheight/8))
+    pygame.draw.rect(screen, color_green, pygame.Rect(playerpos[0]/8,playerpos[1]/8,pheight/8, pheight/8))
+    for enemy in enemy_list:
+        pygame.draw.rect(screen, color_list[enemy.type], pygame.Rect(enemy.position[0]/8,enemy.position[1]/8,pheight/8, pheight/8))
 
 
 def setspeed(): ### Si el jugador se desplaza a la vez en los ejes x e y, tiene que moverse más lento en ambos ejes (si no su velocidad total es considerablemente mayor)
