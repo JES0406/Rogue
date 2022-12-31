@@ -127,9 +127,21 @@ while running:
                         end_state = True
                     if event.key == pygame.K_ESCAPE:
                         pausa_state = True 
-                    elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                        target = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-                        bullets.add(Projectile(user.relative_pos, target, 10, 20, user.hitpoint, False)) 
+
+                    
+                    if event.key == pygame.K_SPACE:
+                        ability = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE and ability:
+                        target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
+                        user.ability(target)
+                if pygame.mouse.get_pressed()[2]:
+                    shoot = True
+                if shoot and not pygame.mouse.get_pressed()[2]:
+                    target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
+                    bullets.add(Projectile(user.relative_pos, target, user.proyectile_size, user.proyectile_size, user.hitpoint, 1, user.proyectile))
+                    shoot = False
+                
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
