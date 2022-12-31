@@ -109,6 +109,8 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self):
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
+        self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.health_bar()
         self.mana_bar()
         if self.HP < self.MaxHP:

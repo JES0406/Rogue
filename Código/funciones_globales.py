@@ -52,7 +52,7 @@ def background(state_str, role = None):
         fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (mapwidth, mapheight))
     else:
         fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (ANCHO, ALTO))
-    screen.blit(fondo, (0,0))
+    screen.blit(fondo, (relative_pos((0,0),0), relative_pos((0,0),1)))
 # Imagenes
 
 def admins(marcos, pos_marcos, javi, pos_javi):
