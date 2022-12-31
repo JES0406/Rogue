@@ -178,6 +178,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
+        self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.move(player)
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         if self.HP <= 0:
