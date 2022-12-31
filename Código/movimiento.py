@@ -1,7 +1,6 @@
 import pygame, math, random
 from constantes import *
 pygame.init()
-print(abecedario)
 
 print('Espacio para hacer que aparezca un enemigo al azar')
 ### Player variables
@@ -10,6 +9,9 @@ pheight = 32
 playerpos = [ANCHO / 2, ALTO / 2]
 pspeed = 5
 pdamage = 7
+phealth = 10
+def check_if_player_is_dead():
+    if phealth <= 0: print('YOU DIED')
 mov_r = False
 mov_l = False
 mov_u = False
@@ -47,21 +49,33 @@ def setspeed(): ### Si el jugador se desplaza a la vez en los ejes x e y, tiene 
     return int(movespeed)
 
 def calc_distance(point_A:list, point_B:list) -> float:
-        distance_x = point_A[0] - point_B[0]
-        distance_y = point_A[1] - point_B[1]
-        distance = math.sqrt(distance_x**2 + distance_y **2)
-        return distance
+    distance_x = point_A[0] - point_B[0]
+    distance_y = point_A[1] - point_B[1]
+    distance = math.sqrt(distance_x**2 + distance_y **2)
+    return distance
 
 
 
 enemy_list = []
 enemy_id = 0
 class Enemy:
-    def __init__(self, speed, range, position:tuple, type, hp = 20):
+    def __init__(self, speed, range, position:tuple, type, hp = 20, attack_cooldown = 60):
         self.type, self.speed, self.range, self.position, self.hp = type, speed, range + pwidth, list(position), hp
+        self.attack_timer = 0
+        self.attack_cooldown = attack_cooldown
         enemy_list.append(self)
         
-    def pathfind(self, target:list):
+    def shoot(self):
+        target = [playerpos[0] + pheight/2, playerpos[1] + pheight/2]
+        Projectile(self.position, target, 4, 2, 4, False, False)
+    def melee(self):
+        pass
+    def attack(self):
+        if self.type == 1: self.shoot()
+        else: self.melee()
+
+    def pathfind_and_update(self, target:list):
+        #pathfind
         distance = calc_distance(target, self.position)
         if distance < self.range: 
             speed_vector = -self.speed
@@ -71,6 +85,11 @@ class Enemy:
         elif self.position[0] > self.speed + target[0]: self.position[0] -= speed_vector
         if self.position[1] < self.speed + target[1]: self.position[1] += speed_vector
         elif self.position[1] > self.speed + target[1]: self.position[1] -= speed_vector
+        #update
+        self.attack_timer += 1
+        if self.attack_timer >= self.attack_cooldown:
+            self.attack_timer = 0
+            self.shoot()
 
     def damage(self, hp_loss):
         self.hp -= hp_loss
@@ -79,19 +98,28 @@ class Enemy:
     
 projectile_list = []
 class Projectile:
-    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: bool):
+    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: bool, player_team:bool):
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
-        self.size, self.damage, self.piercing = size, damage, piercing
+        self.size, self.damage, self.piercing, self.player_team = size, damage, piercing, player_team
         self.speed_x = speed * (target_position[0]-position[0])/max(calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(calc_distance(self.position, target_position),0.001)
         projectile_list.append(self)
     def update(self):
+        global phealth
         hit_target = False
-        for enemy in enemy_list:
-            if enemy.position[0] < self.position[0] < enemy.position[0] + pheight:
-                if enemy.position[1] < self.position[1] < enemy.position[1] + pheight:
-                    enemy.damage(self.damage)
+        if self.player_team:
+            for enemy in enemy_list:
+                if enemy.position[0] < self.position[0] < enemy.position[0] + pheight:
+                    if enemy.position[1] < self.position[1] < enemy.position[1] + pheight:
+                        enemy.damage(self.damage)
+                        hit_target = True
+        else: 
+            if playerpos[0] < self.position[0] < playerpos[0] + pheight:
+                if playerpos[1] < self.position[1] < playerpos[1] + pheight:
+                    phealth -= self.damage
                     hit_target = True
+                    print(phealth)
+                    check_if_player_is_dead()
         self.position[0] += self.speed_x
         self.position[1] += self.speed_y
         pygame.draw.circle(screen, 'White', (relative_pos(self.position, 0), relative_pos(self.position, 1)), self.size)
@@ -127,13 +155,13 @@ while run:
 
         ### Start moving here
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT: mov_l = True
-            elif event.key == pygame.K_RIGHT: mov_r = True
-            elif event.key == pygame.K_UP: mov_u = True
-            elif event.key == pygame.K_DOWN: mov_d = True
+            if event.key == pygame.K_a: mov_l = True
+            elif event.key == pygame.K_d: mov_r = True
+            elif event.key == pygame.K_w: mov_u = True
+            elif event.key == pygame.K_s: mov_d = True
             elif event.key == pygame.K_LSHIFT: 
                 target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
-                Projectile(playerpos, target, 10, 2, pdamage, False)
+                Projectile(playerpos, target, 10, 20, pdamage, False, True)
             elif event.key == pygame.K_SPACE:
                 addenemy(random.randint(0,2))
                 print(len(enemy_list))
@@ -144,13 +172,13 @@ while run:
 
         ### Stop moving here
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_a:
                 mov_l = False
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_d:
                 mov_r = False
-            elif event.key == pygame.K_UP:
+            elif event.key == pygame.K_w:
                 mov_u = False
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_s:
                 mov_d = False
 
     moving_speed = setspeed()
@@ -163,7 +191,7 @@ while run:
 
     pygame.draw.rect(screen, color_green, pygame.Rect(relative_pos(playerpos, 0), relative_pos(playerpos, 1), pwidth, pheight), width = 0)
     for bad_guy in enemy_list: 
-        bad_guy.pathfind(playerpos)
+        bad_guy.pathfind_and_update(playerpos)
         pygame.draw.rect(screen, color_list[bad_guy.type],\
              pygame.Rect(relative_pos(bad_guy.position, 0), relative_pos(bad_guy.position, 1), pwidth, pheight), width = 0)
     for projectile in projectile_list:
