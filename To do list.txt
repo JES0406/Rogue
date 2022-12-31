@@ -29,8 +29,6 @@ Fin del juego:
 
 -----------------------------------------------
 1. Animaciones 
-2. Movimiento
-3. Disparos
 6. Fondos
 9. Sistema de puntuación
 10. Numeros

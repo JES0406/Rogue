@@ -7,15 +7,6 @@ from clases import Player, Button, Enemy
 pygame.init()
 pygame.display.set_caption("iMAT") #Título
 
-running = True
-inicio_state = True
-class_state = False
-nombre_state = False
-juego_state = False
-level_up = False
-pausa_state = False
-clase = ""
-enemy_list = []
 
 def hide():
     global show, contador
@@ -26,6 +17,8 @@ def hide():
     else:
         contador = 0
         show = not show
+
+
 
 show = True
 
@@ -113,14 +106,7 @@ while running:
                         juego_state = False
                         end_state = True
                     if event.key == pygame.K_ESCAPE:
-                        pausa_state = True
-                    if event.key == pygame.K_UP:
-                        user.rotate("up")
-                    if event.key == pygame.K_LEFT:
-                        user.rotate("left")
-                    if event.key == pygame.K_RIGHT:
-                        user.rotate("right")
-                
+                        pausa_state = True                
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
@@ -205,7 +191,8 @@ while running:
                     if len(nombre_str) < LONGITUD_NOMBRE:
                         nombre_str += button.name
     elif juego_state:
-        print(user)
+        fn.update_camera_pos(user)
+        print(user.position)
         fn.background("game")
         bushes.draw(screen)
         if user.exp >= user.exp_to_level:
@@ -257,10 +244,10 @@ while running:
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
                 enemy_timer = 0
                 
-            enemeies.update(user)
-            enemeies.draw(screen)
             player.update()
             player.draw(screen)
+            enemeies.update(user)
+            enemeies.draw(screen)
 
     elif end_state:
         if escena == 1:
