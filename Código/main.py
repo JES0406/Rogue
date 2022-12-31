@@ -112,9 +112,8 @@ while running:
                     if event.key == pygame.K_ESCAPE:
                         pausa_state = True 
                     elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                        pos_x = fn.relative_pos(list(pygame.mouse.get_pos()) + camera_left_top, 0)
-                        pos_y = fn.relative_pos(list(pygame.mouse.get_pos()) + camera_left_top, 1)
-                        bullets.add(Projectile(user.relative_pos, (pos_x, pos_y), 10, 20, user.hitpoint, False)) 
+                        target = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                        bullets.add(Projectile(user.relative_pos, target, 10, 20, user.hitpoint, False)) 
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
