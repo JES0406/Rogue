@@ -17,6 +17,10 @@ def hide():
     else:
         contador = 0
         show = not show
+def draw_minimap(user):
+    pygame.draw.rect(screen, 'White', pygame.Rect(0,0,ANCHO / 4 + 2, ALTO / 4 +2))
+    pygame.draw.rect(screen, 'Black', pygame.Rect(0,0,ANCHO / 4, ALTO / 4))
+    pygame.draw.rect(screen, color_green, pygame.Rect(user.position[0]/8,user.position[1]/8,user.size[0]/8, user.size[0]/8))
 
 
 
@@ -248,6 +252,7 @@ while running:
             player.draw(screen)
             enemeies.update(user)
             enemeies.draw(screen)
+            draw_minimap(user)
 
     elif end_state:
         if escena == 1:
