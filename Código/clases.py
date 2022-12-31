@@ -186,14 +186,19 @@ class Enemy(pygame.sprite.Sprite):
 class Projectile(pygame.sprite.Sprite):
 
     def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: bool):
+        pygame.sprite.Sprite.__init__(self)
+        # The image is a circle
+        self.image = pygame.Surface((size, size))
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
         self.size, self.damage, self.piercing = size, damage, piercing
         self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
+        self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
 
     def update(self):
+        self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         self.position[0] += self.speed_x
         self.position[1] += self.speed_y
-        pygame.draw.circle(screen, 'White', (fn.relative_pos(self.position, 0), fn.relative_pos(self.position, 1)), self.size)
+        
         if not (0 < self.position[0] < mapwidth) or not (0 < self.position[1] < mapheight):
             self.kill()

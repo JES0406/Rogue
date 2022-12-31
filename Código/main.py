@@ -253,7 +253,7 @@ while running:
             enemies_hit = pygame.sprite.groupcollide(enemeies, bullets, False, True)
             for enemy in enemies_hit:
                 enemy.HP -= user.hitpoint
-            sprite_hit = pygame.sprite.spritecollide(user, bullets, True)
+            sprite_hit = pygame.sprite.spritecollide(user, enemy_bullets, True)
             for bullet in sprite_hit:
                 user.HP -= bullet.damage
 
