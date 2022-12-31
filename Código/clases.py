@@ -1,36 +1,15 @@
 import math, random, pygame, sys, time, os
 from constantes import *
 import funciones_globales as fn
-# class Enemy:
-    # def __init__(self, speed, range, position:tuple, type):
-    #     global pwitdh, pheight, enemy_id, color_list, screen
-    #     self.type = type
-    #     self.speed = speed
-    #     self.range = range + pwidth
-    #     self.position = [position[0], position[1]]
-    #     global enemy_id
-    #     self.id = enemy_id
-    #     enemy_id += 1
-    # def move(self, target:list):
-    #         ### Ranged enemy movement
-    #     distance_x = target[0] - self.position[0]
-    #     distance_y = target[1] - self.position[1]
-    #     distance = math.sqrt(distance_x**2 + distance_y **2)
-    #     if distance < self.range: 
-    #         ranged_espeed_vector = -self.speed
-    #     elif abs(distance - self.range) < self.speed: ranged_espeed_vector = 0 
-    #     else: ranged_espeed_vector = self.speed
-    #     if self.position[0] < self.speed + target[0]: self.position[0] += ranged_espeed_vector
-    #     elif self.position[0] > self.speed + target[0]: self.position[0] -= ranged_espeed_vector
-    #     if self.position[1] < self.speed + target[1]: self.position[1] += ranged_espeed_vector
-    #     elif self.position[1] > self.speed + target[1]: self.position[1] -= ranged_espeed_vector
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, class_chosen):
         pygame.sprite.Sprite.__init__(self)
         self.image = fn.chosen_sprite(class_chosen)
         self.position = [ANCHO//2, ALTO//2]
-        self.rect = self.image.get_rect(center = (ANCHO//2, ALTO//2))
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
+        self.size = self.image.get_size()
         if class_chosen == "Caballero": 
             self.speed = 4
             self.MaxHP = 100
@@ -81,14 +60,12 @@ class Player(pygame.sprite.Sprite):
     def level_up(self, choice):
             if choice == "HP":
                 self.MaxHP += 10
-                self.HP += 10
                 self.HPregen += 0.01
             elif choice == "Mana":
                 self.MaxMana += 10
-                self.Mana += 10
                 self.Manaregen += 0.01
             elif choice == "Speed":
-                self.speed += 0.2
+                self.speed+= 0.2
             elif choice == "Damage":
                 self.hitpoint += 1
             
@@ -99,7 +76,37 @@ class Player(pygame.sprite.Sprite):
             pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width * (self.exp/self.exp_to_level), 5))
         except ZeroDivisionError:
             pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
+    
+    def movement(self):
+        if pygame.key.get_pressed()[pygame.K_a] or pygame.key.get_pressed()[pygame.K_LEFT]:
+            mov_l = True
+        if pygame.key.get_pressed()[pygame.K_d] or pygame.key.get_pressed()[pygame.K_RIGHT]:
+            mov_r = True
+        if pygame.key.get_pressed()[pygame.K_w] or pygame.key.get_pressed()[pygame.K_UP]:
+            mov_u = True
+        if pygame.key.get_pressed()[pygame.K_s] or pygame.key.get_pressed()[pygame.K_DOWN]:
+            mov_d = True
+        if not pygame.key.get_pressed()[pygame.K_a] and not pygame.key.get_pressed()[pygame.K_LEFT]:
+            mov_l = False
+        if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_RIGHT]:
+            mov_r = False
+        if not pygame.key.get_pressed()[pygame.K_w] and not pygame.key.get_pressed()[pygame.K_UP]:
+            mov_u = False
+        if not pygame.key.get_pressed()[pygame.K_s] and not pygame.key.get_pressed()[pygame.K_DOWN]:
+            mov_d = False
+
+        movingdirections = 0
         
+        for element in [mov_l, mov_r, mov_u, mov_d]:
+            if element: movingdirections += 1
+        if movingdirections > 1: movespeed = (2*self.speed)**1/2
+        else: movespeed = self.speed
+
+        if mov_l and self.position[0] > 0: self.position[0] -= movespeed
+        elif mov_r and self.position [0] < mapwidth - self.size[0]: self.position[0] += movespeed
+        if mov_u and self.position[1] > 0: self.position[1] -= movespeed
+        elif mov_d and self.position[1] < mapheight - self.size[1]: self.position[1] += movespeed
+
 
     def update(self):
         self.health_bar()
@@ -109,6 +116,8 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
+        # self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.movement()
     
     def __str__(self) -> str:
         return f"HP: {self.HP} Mana: {self.Mana} Speed: {self.speed} Damage: {self.hitpoint} Range: {self.range} Level: {self.level}, Exp: {self.exp}"
@@ -146,7 +155,8 @@ class Enemy(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
             self.speed = 2
         self.position = [pos[0], pos[1]]
-        self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
         self.range += self.size[0]
         
@@ -155,31 +165,46 @@ class Enemy(pygame.sprite.Sprite):
     
     def move(self, player):
         # move towards player but stay in range
-        distance_x = player.position[0] - self.position[0]
-        distance_y = player.position[1] - self.position[1]
-        distance = math.sqrt(distance_x**2 + distance_y **2)
+        distance = fn.calc_distance(player.position, self.position)
         if distance < self.range: 
-            ranged_espeed_vector = -self.speed
-        elif abs(distance - self.range) < self.speed: ranged_espeed_vector = 0 
-        else: ranged_espeed_vector = self.speed
-        if self.position[0] < self.speed + player.position[0]: self.position[0] += ranged_espeed_vector
-        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= ranged_espeed_vector
-        if self.position[1] < self.speed + player.position[1]: self.position[1] += ranged_espeed_vector
-        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= ranged_espeed_vector
-
+            speed_vector = -self.speed
+        elif abs(distance - self.range) < self.speed *2 : speed_vector = 0 
+        else: speed_vector = self.speed
+        if self.position[0] < self.speed + player.position[0]: self.position[0] += speed_vector
+        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= speed_vector
+        if self.position[1] < self.speed + player.position[1]: self.position[1] += speed_vector
+        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= speed_vector
 
     def update(self, player):
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
         self.move(player)
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         if self.HP <= 0:
             self.kill()
             player.exp += 10
-        self.HP -= 1
             
+class Projectile(pygame.sprite.Sprite):
 
+    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: bool):
+        self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
+        self.size, self.damage, self.piercing = size, damage, piercing
+        self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
+        self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
+        projectile_list.append(self)
 
-
-
-    
+    def update(self):
+        hit_target = False
+        for enemy in enemy_list:
+            if enemy.position[0] < self.position[0] < enemy.position[0] + pheight:
+                if enemy.position[1] < self.position[1] < enemy.position[1] + pheight:
+                    enemy.damage(self.damage)
+                    hit_target = True
+        self.position[0] += self.speed_x
+        self.position[1] += self.speed_y
+        pygame.draw.circle(screen, 'White', (relative_pos(self.position, 0), relative_pos(self.position, 1)), self.size)
+        if not (0 < self.position[0] < mapwidth) or not (0 < self.position[1] < mapheight):
+            self.piercing, hit_target = False, True
+        if hit_target and not self.piercing:
+            projectile_list.remove(self)
         
         

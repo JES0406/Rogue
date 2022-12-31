@@ -48,8 +48,10 @@ def background(state_str, role = None):
     elif state_str == "level_up":
         string = "level_up.png"
         
-
-    fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (ANCHO, ALTO))
+    if state_str == "game":
+        fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (mapwidth, mapheight))
+    else:
+        fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (ANCHO, ALTO))
     screen.blit(fondo, (0,0))
 # Imagenes
 
@@ -115,5 +117,18 @@ def chosen_sprite(choice):
 
     return class_image
 
+def get_camera_centre(): return (camera_left_top[0] + ANCHO/2, camera_left_top[1] + ALTO/2)
 
+def update_camera_pos(user):
+    global camera_left_top
+    camera_left_top[0] = min(max(0, user.position[0] - (ANCHO / 2)), mapwidth - ANCHO)
+    camera_left_top[1] = min(max(0, user.position[1] - (ALTO / 2)), mapheight - ALTO)
 
+def calc_distance(point_A:list, point_B:list) -> float:
+        distance_x = point_A[0] - point_B[0]
+        distance_y = point_A[1] - point_B[1]
+        distance = math.sqrt(distance_x**2 + distance_y **2)
+        return distance
+
+def relative_pos(position, coordinate:int) -> int:
+    return position[coordinate] - camera_left_top[coordinate]
