@@ -67,7 +67,8 @@ class Player(pygame.sprite.Sprite):
             elif choice == "Speed":
                 self.speed+= 0.2
             elif choice == "Damage":
-                self.hitpoint += 1
+                self.hitpoint += 100
+            
             
 
     def exp_bar(self):
