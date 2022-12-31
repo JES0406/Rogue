@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = fn.chosen_sprite(class_chosen)
         self.position = [ANCHO//2, ALTO//2]
-        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
         if class_chosen == "Caballero": 
@@ -116,7 +116,7 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
-        # self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        # self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.movement()
     
     def __str__(self) -> str:
@@ -155,7 +155,7 @@ class Enemy(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
             self.speed = 2
         self.position = [pos[0], pos[1]]
-        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
         self.range += self.size[0]
@@ -176,7 +176,7 @@ class Enemy(pygame.sprite.Sprite):
         elif self.position[1] > self.speed + player.position[1]: self.position[1] -= speed_vector
 
     def update(self, player):
-        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,0)]
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.move(player)
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         if self.HP <= 0:
@@ -206,5 +206,3 @@ class Projectile(pygame.sprite.Sprite):
             self.piercing, hit_target = False, True
         if hit_target and not self.piercing:
             projectile_list.remove(self)
-        
-        
