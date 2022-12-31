@@ -116,7 +116,7 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
-        # self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
+        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.movement()
     
     def __str__(self) -> str:
@@ -190,19 +190,10 @@ class Projectile(pygame.sprite.Sprite):
         self.size, self.damage, self.piercing = size, damage, piercing
         self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
-        projectile_list.append(self)
 
     def update(self):
-        hit_target = False
-        for enemy in enemy_list:
-            if enemy.position[0] < self.position[0] < enemy.position[0] + pheight:
-                if enemy.position[1] < self.position[1] < enemy.position[1] + pheight:
-                    enemy.damage(self.damage)
-                    hit_target = True
         self.position[0] += self.speed_x
         self.position[1] += self.speed_y
-        pygame.draw.circle(screen, 'White', (relative_pos(self.position, 0), relative_pos(self.position, 1)), self.size)
+        pygame.draw.circle(screen, 'White', (fn.relative_pos(self.position, 0), fn.relative_pos(self.position, 1)), self.size)
         if not (0 < self.position[0] < mapwidth) or not (0 < self.position[1] < mapheight):
-            self.piercing, hit_target = False, True
-        if hit_target and not self.piercing:
-            projectile_list.remove(self)
+            self.kill()

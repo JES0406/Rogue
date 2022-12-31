@@ -34,6 +34,9 @@ pausa_state = False
 clase = ""
 enemy_list = []
 
+choice = ""
+enemy_timer = 0
+
 abecedario = [chr(i + 65) for i in range(26)]; abecedario.append(' ') # Lo mismo pero este le gusta a David porque está DRY 😉 JAajjajaja
 
 enemy_types = ["Melee", "Ranged"]

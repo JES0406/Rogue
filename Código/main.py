@@ -1,7 +1,7 @@
 import pygame, sys, random, math, time, os
 import funciones_globales as fn 
 from constantes import *
-from clases import Player, Button, Enemy
+from clases import Player, Button, Enemy, Projectile
 
 
 pygame.init()
@@ -80,9 +80,9 @@ while running:
                     player = pygame.sprite.GroupSingle()
                     user = Player(clase)
                     player.add(user)
-                    choice = ""
-                    enemy_timer = 0
                     enemeies = pygame.sprite.Group()
+                    bullets = pygame.sprite.Group()
+                    enemy_bullets = pygame.sprite.Group()
                     nombre_state = False
                     juego_state = True
                 elif event.key == pygame.K_BACKSPACE:
@@ -110,7 +110,9 @@ while running:
                         juego_state = False
                         end_state = True
                     if event.key == pygame.K_ESCAPE:
-                        pausa_state = True                
+                        pausa_state = True 
+                    elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                        bullets.add(Projectile(user.position, [pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1]], 10, 20, user.hitpoint, False))
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
@@ -196,7 +198,7 @@ while running:
                         nombre_str += button.name
     elif juego_state:
         fn.update_camera_pos(user)
-        print(user.position)
+        print(user.position, user.relative_pos)
         fn.background("game")
         bushes.draw(screen)
         if user.exp >= user.exp_to_level:
@@ -248,10 +250,19 @@ while running:
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
                 enemy_timer = 0
                 
+            enemies_hit = pygame.sprite.groupcollide(enemeies, bullets, False, True)
+            for enemy in enemies_hit:
+                enemy.HP -= user.hitpoint
+            sprite_hit = pygame.sprite.spritecollide(user, bullets, True)
+            for bullet in sprite_hit:
+                user.HP -= bullet.damage
+
             player.update()
-            player.draw(screen)
             enemeies.update(user)
+            bullets.update()
+            player.draw(screen)
             enemeies.draw(screen)
+            bullets.draw(screen)
             draw_minimap(user)
 
     elif end_state:
