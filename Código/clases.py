@@ -168,15 +168,15 @@ class Enemy(pygame.sprite.Sprite):
     
     def move(self, player):
         # move towards player but stay in range
-        distance = fn.calc_distance(player.position, self.position)
+        distance = fn.calc_distance(player.relative_pos, self.position)
         if distance < self.range: 
             speed_vector = -self.speed
         elif abs(distance - self.range) < self.speed *2 : speed_vector = 0 
         else: speed_vector = self.speed
-        if self.position[0] < self.speed + player.position[0]: self.position[0] += speed_vector
-        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= speed_vector
-        if self.position[1] < self.speed + player.position[1]: self.position[1] += speed_vector
-        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= speed_vector
+        if self.position[0] < self.speed + player.relative_pos[0]: self.position[0] += speed_vector
+        elif self.position[0] > self.speed + player.relative_pos[0]: self.position[0] -= speed_vector
+        if self.position[1] < self.speed + player.relative_pos[1]: self.position[1] += speed_vector
+        elif self.position[1] > self.speed + player.relative_pos[1]: self.position[1] -= speed_vector
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
