@@ -9,6 +9,7 @@ pheight = 32
 playerpos = [ANCHO / 2, ALTO / 2]
 pspeed = 5
 pdamage = 7
+player_melee_range = 50
 phealth = 10
 def check_if_player_is_dead():
     if phealth <= 0: print('YOU DIED')
@@ -59,20 +60,26 @@ def calc_distance(point_A:list, point_B:list) -> float:
 enemy_list = []
 enemy_id = 0
 class Enemy:
-    def __init__(self, speed, range, position:tuple, type, hp = 20, attack_cooldown = 60):
-        self.type, self.speed, self.range, self.position, self.hp = type, speed, range + pwidth, list(position), hp
+    def __init__(self, speed, range, position:tuple, type, hp = 20, attack_cooldown = 60, damage = 5):
+        self.type, self.speed, self.range, self.position, self.hp, self.dmg = type, speed, range + pwidth, list(position), hp, damage
         self.attack_timer = 0
         self.attack_cooldown = attack_cooldown
         enemy_list.append(self)
         
     def shoot(self):
         target = [playerpos[0] + pheight/2, playerpos[1] + pheight/2]
-        Projectile(self.position, target, 4, 2, 4, False, False)
+        Projectile(self.position, target, 4, 2, self.dmg, False, False)
     def melee(self):
-        pass
+        global phealth
+        if calc_distance(playerpos, self.position) <= self.range + 10:
+            pygame.draw.circle(screen, 'Red', (relative_pos(self.position, 0)+1/2*pheight\
+                , relative_pos(self.position, 1)+1/2*pheight), self.range+10, 10)
+            phealth -= self.dmg
+            print(phealth)
+            check_if_player_is_dead()
     def attack(self):
         if self.type == 1: self.shoot()
-        else: self.melee()
+        elif self.type == 0: self.melee()
 
     def pathfind_and_update(self, target:list):
         #pathfind
@@ -89,7 +96,7 @@ class Enemy:
         self.attack_timer += 1
         if self.attack_timer >= self.attack_cooldown:
             self.attack_timer = 0
-            self.shoot()
+            self.attack()
 
     def damage(self, hp_loss):
         self.hp -= hp_loss
@@ -159,9 +166,16 @@ while run:
             elif event.key == pygame.K_d: mov_r = True
             elif event.key == pygame.K_w: mov_u = True
             elif event.key == pygame.K_s: mov_d = True
-            elif event.key == pygame.K_LSHIFT: 
+            elif event.key == pygame.K_e: 
                 target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
                 Projectile(playerpos, target, 10, 20, pdamage, False, True)
+            elif event.key == pygame.K_q:
+                target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
+                pygame.draw.circle(screen, 'Blue', (relative_pos(playerpos, 0)+1/2*pheight\
+                , relative_pos(playerpos, 1)+1/2*pheight), player_melee_range + pheight, 10)
+                for enemy in enemy_list:
+                    if calc_distance(playerpos, enemy.position) <= player_melee_range + pheight:
+                        enemy.damage(pdamage)
             elif event.key == pygame.K_SPACE:
                 addenemy(random.randint(0,2))
                 print(len(enemy_list))
