@@ -303,8 +303,6 @@ while running:
             enemy_bullets.update()
             player.draw(screen)
             enemeies.draw(screen)
-            bullets.draw(screen)
-            enemy_bullets.draw(screen)
             if slash:
                 screen.blit(slash_img, slash_rect)
                 for i in enemeies:
@@ -312,12 +310,21 @@ while running:
                         i.HP -= user.hitpoint
                 for i in enemy_bullets:
                     if slash_rect.colliderect(i.rect):
+                        i.copy = Projectile(i.position, (fn.relative_pos((math.sin(i.angle - 90) * 100, math.cos(i.angle-90) * 100), 0), fn.relative_pos((math.sin(i.angle -90) *100, math.cos(i.angle-90)*100), 1))\
+                            , i.size, i.speed, i.damage, i.weapon, i.time_to_destroy)
                         i.kill()
+                        bullets.add(i.copy)
                         print("Parry this you filthy casual")
+                        bullets.update()
+                        enemy_bullets.update()
                 slash_count += 1
                 if slash_count == 10:
                     slash = False
                     slash_count = 0
+            
+            bullets.draw(screen)
+            enemy_bullets.draw(screen)
+            
             draw_minimap(user)
 
     elif end_state:

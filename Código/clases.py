@@ -206,7 +206,7 @@ class Enemy(pygame.sprite.Sprite):
                 player.HP -= self.hitpoint
         elif self.type == "Ranged":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
-                enemy_bullets.add(Projectile(self.position, player.position, 15, self.hitpoint, 0, "arrow.png"))
+                enemy_bullets.add(Projectile(self.position, player.position, 25, self.hitpoint, 0, "arrow.png"))
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
@@ -225,16 +225,17 @@ class Projectile(pygame.sprite.Sprite):
     def __init__(self, position:list, target_position, size: int, speed: int, damage: int, weapon: str, time_to_destroy: int = 100):
         pygame.sprite.Sprite.__init__(self)
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
-        self.size, self.damage = size, damage
+        self.size, self.damage, self.speed, self.weapon, self.time_to_destroy = size, damage, speed, weapon, time_to_destroy
         self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
-        angle = math.atan2(self.speed_y, self.speed_x)
+        self.angle = math.atan2(self.speed_y, self.speed_x)
         
         self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/Proyectiles/" + weapon).convert_alpha(), (self.size, self.size))
-        self.image = pygame.transform.rotate(self.image, -angle * 180 / math.pi)
+        self.image = pygame.transform.rotate(self.image, -self.angle * 180 / math.pi)
 
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
-        self.time_to_destroy = time_to_destroy
+        
+        
         
 
     def update(self):
