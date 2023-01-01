@@ -129,7 +129,6 @@ class Player(pygame.sprite.Sprite):
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
         self.exp_bar()
-        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.movement()
     
     def __str__(self) -> str:
@@ -157,25 +156,29 @@ class Button():
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, type):
         pygame.sprite.Sprite.__init__(self)
-        if type == "Melee":
+        self.type = type
+        if self.type == "Melee":
             self.HP = 100
             self.range = 10
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (80, 80))
             self.speed = 1
-        elif type == "Ranged":
+            self.hitpoint = 5
+            self.attack_timer = 0
+            self.attack_cooldown = 60
+        elif self.type == "Ranged":
             self.HP = 50
             self.range = 100
             self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
             self.speed = 2
+            self.hitpoint = 10
+            self.attack_timer = 0
+            self.attack_cooldown = 60
         self.position = [pos[0], pos[1]]
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
         self.range += self.size[0]
         
-        
-
-    
     def move(self, player):
         # move towards player but stay in range
         distance = fn.calc_distance(player.relative_pos, self.position)
@@ -188,6 +191,16 @@ class Enemy(pygame.sprite.Sprite):
         if self.position[1] < self.speed + player.relative_pos[1]: self.position[1] += speed_vector
         elif self.position[1] > self.speed + player.relative_pos[1]: self.position[1] -= speed_vector
 
+    def attack(self, player):
+        global enemy_bullets
+        if self.type == "Melee":
+            if fn.calc_distance(self.position, player.relative_pos) <= self.range + self.size[0]:
+                pygame.draw.line(screen, (255,0,0), self.position, player.relative_pos, 5)
+                player.HP -= self.hitpoint
+        elif self.type == "Ranged":
+            if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
+                enemy_bullets.add(Projectile(self.position, player.relative_pos, 15, 2, self.hitpoint, 0, "arrow.png"))
+
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
@@ -196,6 +209,10 @@ class Enemy(pygame.sprite.Sprite):
         if self.HP <= 0:
             self.kill()
             player.exp += 10
+        self.attack_timer += 1
+        if self.attack_timer >= self.attack_cooldown:
+            self.attack_timer = 0
+            self.attack(player)
             
 class Projectile(pygame.sprite.Sprite):
 
