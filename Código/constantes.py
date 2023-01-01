@@ -35,6 +35,7 @@ shoot = False
 ability = False
 clase = ""
 enemy_list = []
+enemy_bullets = pygame.sprite.Group()
 
 choice = ""
 enemy_timer = 0

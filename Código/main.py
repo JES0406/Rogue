@@ -98,7 +98,6 @@ while running:
                     player.add(user)
                     enemeies = pygame.sprite.Group()
                     bullets = pygame.sprite.Group()
-                    enemy_bullets = pygame.sprite.Group()
                     nombre_state = False
                     juego_state = True
                 elif event.key == pygame.K_BACKSPACE:
@@ -227,7 +226,7 @@ while running:
                         nombre_str += button.name
     elif juego_state:
         fn.update_camera_pos(user)
-        print(user.position, user.relative_pos)
+        print(user.HP)
         fn.background("game")
         if user.exp >= user.exp_to_level:
             level_up_state= True
@@ -291,9 +290,11 @@ while running:
             player.update()
             enemeies.update(user)
             bullets.update()
+            enemy_bullets.update()
             player.draw(screen)
             enemeies.draw(screen)
             bullets.draw(screen)
+            enemy_bullets.draw(screen)
             draw_minimap(user)
 
     elif end_state:
