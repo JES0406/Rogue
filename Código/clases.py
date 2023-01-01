@@ -129,8 +129,12 @@ class Player(pygame.sprite.Sprite):
         self.mana_bar()
         if self.HP < self.MaxHP:
             self.HP += self.HPregen
+        elif self.HP > self.MaxHP:
+            self.HP = self.MaxHP
         if self.Mana < self.MaxMana:
             self.Mana += self.Manaregen
+        elif self.Mana > self.MaxMana:
+            self.Mana = self.MaxMana
         self.exp_bar()
         self.movement()
     
@@ -198,11 +202,11 @@ class Enemy(pygame.sprite.Sprite):
         global enemy_bullets
         if self.type == "Melee":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
-                pygame.draw.line(screen, (255,0,0), self.relative_pos, player.relative_pos, 5)
+                pygame.draw.line(screen, (255,0,0), self.relative_pos, player.relative_pos, 10)
                 player.HP -= self.hitpoint
         elif self.type == "Ranged":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
-                enemy_bullets.add(Projectile(self.position, player.position, 15, 2, self.hitpoint, 0, "arrow.png"))
+                enemy_bullets.add(Projectile(self.position, player.position, 15, self.hitpoint, 0, "arrow.png"))
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
@@ -218,10 +222,10 @@ class Enemy(pygame.sprite.Sprite):
             
 class Projectile(pygame.sprite.Sprite):
 
-    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: int, weapon: str, time_to_destroy: int = 100):
+    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, weapon: str, time_to_destroy: int = 100):
         pygame.sprite.Sprite.__init__(self)
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
-        self.size, self.damage, self.piercing = size, damage, piercing
+        self.size, self.damage = size, damage
         self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
         angle = math.atan2(self.speed_y, self.speed_x)
@@ -230,7 +234,6 @@ class Projectile(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, -angle * 180 / math.pi)
 
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
-        self.piercing = piercing
         self.time_to_destroy = time_to_destroy
         
 

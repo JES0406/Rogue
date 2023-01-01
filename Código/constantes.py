@@ -33,9 +33,13 @@ level_up = False
 pausa_state = False
 shoot = False
 ability = False
+slash = False
 clase = ""
 enemy_list = []
 enemy_bullets = pygame.sprite.Group()
+player = pygame.sprite.GroupSingle()
+enemeies = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
 
 choice = ""
 enemy_timer = 0

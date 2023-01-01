@@ -93,11 +93,8 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
-                    player = pygame.sprite.GroupSingle()
                     user = Player(clase)
                     player.add(user)
-                    enemeies = pygame.sprite.Group()
-                    bullets = pygame.sprite.Group()
                     nombre_state = False
                     juego_state = True
                 elif event.key == pygame.K_BACKSPACE:
@@ -138,12 +135,19 @@ while running:
                 if user.class_chosen != "Caballero":
                     if shoot and not pygame.mouse.get_pressed()[2]:
                         target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
-                        bullets.add(Projectile(user.position, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, 1, user.proyectile, 1000))
+                        bullets.add(Projectile(user.position, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, user.proyectile, 1000))
                         shoot = False
                 else:
-                    if shoot and not pygame.mouse.get_pressed()[2]:
-                        target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
-                        bullets.add(Projectile(user.relative_pos, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, 100, user.proyectile))
+                    if shoot and not pygame.mouse.get_pressed()[2] and not slash:
+                        slash = True
+                        target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
+                        angle = math.degrees(math.atan2(user.position[1] - target[1], user.position[0] - target[0]))
+                        pos = (user.relative_pos[0] - 50 * math.cos(math.radians(angle)), user.relative_pos[1] - 50 * math.sin(math.radians(angle)))
+                        print(angle)
+                        slash_img = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("Graphics/Clases/proyectiles/slash.png")\
+                            .convert_alpha(), (75, 75)), angle)
+                        slash_rect = slash_img.get_rect(center = pos)
+                        slash_count = 0
                         shoot = False
                 
 
@@ -230,7 +234,6 @@ while running:
                         nombre_str += button.name
     elif juego_state:
         fn.update_camera_pos(user)
-        print(user.HP)
         fn.background("game")
         if user.exp >= user.exp_to_level:
             level_up_state= True
@@ -281,7 +284,9 @@ while running:
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
                 enemy_timer = 0
                 
-            enemies_hit = pygame.sprite.groupcollide(enemeies, bullets, False, False)
+            enemies_hit = pygame.sprite.groupcollide(enemeies, bullets, False, True)
+            for enemy in enemies_hit:
+                enemy.HP -= user.hitpoint
             
             for enemy in enemies_hit:
                 enemy.HP -= user.hitpoint
@@ -289,7 +294,7 @@ while running:
             for bullet in sprite_hit:
                 user.HP -= bullet.damage
 
-
+            
             bushes.update()
             bushes.draw(screen)
             player.update()
@@ -300,6 +305,19 @@ while running:
             enemeies.draw(screen)
             bullets.draw(screen)
             enemy_bullets.draw(screen)
+            if slash:
+                screen.blit(slash_img, slash_rect)
+                for i in enemeies:
+                    if slash_rect.colliderect(i.rect):
+                        i.HP -= user.hitpoint
+                for i in enemy_bullets:
+                    if slash_rect.colliderect(i.rect):
+                        i.kill()
+                        print("Parry this you filthy casual")
+                slash_count += 1
+                if slash_count == 10:
+                    slash = False
+                    slash_count = 0
             draw_minimap(user)
 
     elif end_state:
