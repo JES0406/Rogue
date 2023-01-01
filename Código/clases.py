@@ -18,6 +18,9 @@ class Player(pygame.sprite.Sprite):
             self.HPregen = 0.1
             self.range = 10
             self.MaxMana = 0
+            self.proyectile = "slash.png"
+            self.proyectile_size = 300
+            self.proyectile_speed = 0
         elif self.class_chosen == "Mago": 
             self.speed = 2
             self.MaxHP = 60
@@ -216,7 +219,7 @@ class Enemy(pygame.sprite.Sprite):
             
 class Projectile(pygame.sprite.Sprite):
 
-    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: int, weapon: str):
+    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: int, weapon: str, time_to_destroy: int = 100):
         pygame.sprite.Sprite.__init__(self)
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
         self.size, self.damage, self.piercing = size, damage, piercing
@@ -229,6 +232,7 @@ class Projectile(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         self.piercing = piercing
+        self.time_to_destroy = time_to_destroy
         
 
     def update(self):
@@ -239,4 +243,7 @@ class Projectile(pygame.sprite.Sprite):
         self.position[1] += self.speed_y
         
         if not (0 < self.position[0] < mapwidth) or not (0 < self.position[1] < mapheight):
+            self.kill()
+        self.time_to_destroy -= 1
+        if self.time_to_destroy <= 0:
             self.kill()
