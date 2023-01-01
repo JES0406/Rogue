@@ -31,6 +31,8 @@ nombre_state = False
 juego_state = False
 level_up = False
 pausa_state = False
+shoot = False
+ability = False
 clase = ""
 enemy_list = []
 

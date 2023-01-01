@@ -44,15 +44,16 @@ def background(state_str, role = None):
         
 
     elif state_str == "game":
-        string = "desierto.jpg"
+        string = "desierto.png"
     elif state_str == "level_up":
         string = "level_up.png"
         
     if state_str == "game":
         fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (mapwidth, mapheight))
+        screen.blit(fondo, (relative_pos((0,0), 0), relative_pos((0,0), 1)))
     else:
         fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (ANCHO, ALTO))
-    screen.blit(fondo, (relative_pos((0,0),0), relative_pos((0,0),1)))
+        screen.blit(fondo, (0,0))
 # Imagenes
 
 def admins(marcos, pos_marcos, javi, pos_javi):

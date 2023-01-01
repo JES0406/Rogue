@@ -27,12 +27,28 @@ def draw_minimap(user):
 show = True
 
 bushes = pygame.sprite.Group()
+class Bush(pygame.sprite.Sprite):
+    def __init__(self,choice = "1"):
+        super().__init__(bushes)
+        if choice == "1":
+            self.image = pygame.transform.scale(pygame.image.load("Graphics/Fondos/Decoration/bush_1.png").convert_alpha(), (100, 60))
+        elif choice == "2":
+            self.image = pygame.transform.scale(pygame.image.load("Graphics/Fondos/Decoration/bush_2.png").convert_alpha(), (100, 150))
+        elif choice == "3":
+            self.image = pygame.transform.scale(pygame.image.load("Graphics/Fondos/Decoration/bush_3.png").convert_alpha(), (100, 80))
+        self.pos = (random.randint(0, mapwidth), random.randint(0, mapheight))
+        self.rect = self.image.get_rect(center = self.pos)
 
-for i in range(10):
-    bush_pos = (random.randint(0, ANCHO), random.randint(0, ALTO))
-    bush = pygame.sprite.Sprite(bushes)
-    bush.image = pygame.transform.scale(pygame.image.load("Graphics/Fondos/Decoration/bush_1.png"), (100, 80))
-    bush.rect = bush.image.get_rect(center = bush_pos)
+    def update(self):
+        self.rect = self.image.get_rect(center = (fn.relative_pos(self.pos, 0), fn.relative_pos(self.pos, 1)))
+while len(bushes) < 100:
+    print(len(bushes))
+    bush = Bush(random.choice(["1", "2", "3"]))
+    if not pygame.sprite.spritecollideany(bush, bushes):  
+        bushes.add(bush)
+    print(len(bushes))
+    
+        
     
 
 
@@ -111,10 +127,21 @@ while running:
                         end_state = True
                     if event.key == pygame.K_ESCAPE:
                         pausa_state = True 
-                    elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                        pos_x = fn.relative_pos(list(pygame.mouse.get_pos()) + camera_left_top, 0)
-                        pos_y = fn.relative_pos(list(pygame.mouse.get_pos()) + camera_left_top, 1)
-                        bullets.add(Projectile(user.relative_pos, (pos_x, pos_y), 10, 20, user.hitpoint, False)) 
+
+                    
+                    if event.key == pygame.K_SPACE:
+                        ability = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE and ability:
+                        target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
+                        user.ability(target)
+                if pygame.mouse.get_pressed()[2]:
+                    shoot = True
+                if shoot and not pygame.mouse.get_pressed()[2]:
+                    target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
+                    bullets.add(Projectile(user.relative_pos, target, user.proyectile_size, user.proyectile_size, user.hitpoint, 1, user.proyectile))
+                    shoot = False
+                
 
         elif end_state:
             if event.type == pygame.KEYDOWN:
@@ -202,7 +229,6 @@ while running:
         fn.update_camera_pos(user)
         print(user.position, user.relative_pos)
         fn.background("game")
-        bushes.draw(screen)
         if user.exp >= user.exp_to_level:
             level_up_state= True
             user.exp -= user.exp_to_level
@@ -259,6 +285,9 @@ while running:
             for bullet in sprite_hit:
                 user.HP -= bullet.damage
 
+
+            bushes.update()
+            bushes.draw(screen)
             player.update()
             enemeies.update(user)
             bullets.update()

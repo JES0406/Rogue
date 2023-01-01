@@ -10,34 +10,44 @@ class Player(pygame.sprite.Sprite):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
-        if class_chosen == "Caballero": 
+        self.class_chosen = class_chosen
+        if self.class_chosen == "Caballero": 
             self.speed = 4
             self.MaxHP = 100
             self.hitpoint = 10
             self.HPregen = 0.1
             self.range = 10
             self.MaxMana = 0
-        elif class_chosen == "Mago": 
+        elif self.class_chosen == "Mago": 
             self.speed = 2
             self.MaxHP = 60
             self.hitpoint = 20
             self.HPregen = 0.1
             self.range = 60
             self.MaxMana = 250
-        elif class_chosen == "Arquero": 
+            self.proyectile = "fireball.png"
+            self.proyectile_size = 30
+            self.proyectile_speed = 10
+        elif self.class_chosen == "Arquero": 
             self.speed = 6
             self.MaxHP = 40
             self.hitpoint = 20
             self.HPregen = 0.05
             self.range = 60
             self.MaxMana = 0
-        elif class_chosen == "Curandero": 
+            self.proyectile = "arrow.png"
+            self.proyectile_size = 30
+            self.proyectile_speed = 10
+        elif self.class_chosen == "Curandero": 
             self.speed = 4
             self.MaxHP = 80
             self.hitpoint = 5
             self.HPregen = 0.2
             self.range = 60
             self.MaxMana = 100
+            self.proyectile = "heal.png"
+            self.proyectile_size = 30
+            self.proyectile_speed = 2
 
         self.Manaregen = 0.2
         self.exp = 0
@@ -168,15 +178,15 @@ class Enemy(pygame.sprite.Sprite):
     
     def move(self, player):
         # move towards player but stay in range
-        distance = fn.calc_distance(player.position, self.position)
+        distance = fn.calc_distance(player.relative_pos, self.position)
         if distance < self.range: 
             speed_vector = -self.speed
         elif abs(distance - self.range) < self.speed *2 : speed_vector = 0 
         else: speed_vector = self.speed
-        if self.position[0] < self.speed + player.position[0]: self.position[0] += speed_vector
-        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= speed_vector
-        if self.position[1] < self.speed + player.position[1]: self.position[1] += speed_vector
-        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= speed_vector
+        if self.position[0] < self.speed + player.relative_pos[0]: self.position[0] += speed_vector
+        elif self.position[0] > self.speed + player.relative_pos[0]: self.position[0] -= speed_vector
+        if self.position[1] < self.speed + player.relative_pos[1]: self.position[1] += speed_vector
+        elif self.position[1] > self.speed + player.relative_pos[1]: self.position[1] -= speed_vector
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
@@ -189,15 +199,20 @@ class Enemy(pygame.sprite.Sprite):
             
 class Projectile(pygame.sprite.Sprite):
 
-    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: bool):
+    def __init__(self, position:list, target_position, size: int, speed: int, damage: int, piercing: int, weapon: str):
         pygame.sprite.Sprite.__init__(self)
-        # The image is a circle
-        self.image = pygame.Surface((size, size))
         self.position = [position[0], position[1]] # Hay que hacerlo así porque si no, solo se crea un pointer a la pos. del jugador
         self.size, self.damage, self.piercing = size, damage, piercing
         self.speed_x = speed * (target_position[0]-position[0])/max(fn.calc_distance(self.position, target_position),0.001)
         self.speed_y = speed * (target_position[1]-position[1])/max(fn.calc_distance(self.position, target_position),0.001)
+        angle = math.atan2(self.speed_y, self.speed_x)
+        
+        self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/Proyectiles/" + weapon).convert_alpha(), (self.size, self.size))
+        self.image = pygame.transform.rotate(self.image, -angle * 180 / math.pi)
+
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
+        self.piercing = piercing
+        
 
     def update(self):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
