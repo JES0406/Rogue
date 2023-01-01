@@ -88,10 +88,12 @@ class Enemy:
             speed_vector = -self.speed
         elif abs(distance - self.range) < self.speed *2 : speed_vector = 0 
         else: speed_vector = self.speed
-        if self.position[0] < self.speed + target[0]: self.position[0] += speed_vector
-        elif self.position[0] > self.speed + target[0]: self.position[0] -= speed_vector
-        if self.position[1] < self.speed + target[1]: self.position[1] += speed_vector
-        elif self.position[1] > self.speed + target[1]: self.position[1] -= speed_vector
+
+        if distance != 0:
+            self.position[0] += speed_vector * (target[0]-self.position[0])/(distance)
+            self.position[1] += speed_vector * (target[1]-self.position[1])/(distance)
+
+
         #update
         self.attack_timer += 1
         if self.attack_timer >= self.attack_cooldown:
