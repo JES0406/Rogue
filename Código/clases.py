@@ -197,12 +197,12 @@ class Enemy(pygame.sprite.Sprite):
     def attack(self, player):
         global enemy_bullets
         if self.type == "Melee":
-            if fn.calc_distance(self.position, player.relative_pos) <= self.range + self.size[0]:
-                pygame.draw.line(screen, (255,0,0), self.position, player.relative_pos, 5)
+            if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
+                pygame.draw.line(screen, (255,0,0), self.relative_pos, player.relative_pos, 5)
                 player.HP -= self.hitpoint
         elif self.type == "Ranged":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
-                enemy_bullets.add(Projectile(self.position, player.relative_pos, 15, 2, self.hitpoint, 0, "arrow.png"))
+                enemy_bullets.add(Projectile(self.position, player.position, 15, 2, self.hitpoint, 0, "arrow.png"))
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
@@ -237,7 +237,6 @@ class Projectile(pygame.sprite.Sprite):
     def update(self):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
-        self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
         self.position[0] += self.speed_x
         self.position[1] += self.speed_y
         

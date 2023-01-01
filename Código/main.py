@@ -137,8 +137,8 @@ while running:
                     shoot = True
                 if user.class_chosen != "Caballero":
                     if shoot and not pygame.mouse.get_pressed()[2]:
-                        target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
-                        bullets.add(Projectile(user.relative_pos, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, 1, user.proyectile, 1000))
+                        target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
+                        bullets.add(Projectile(user.position, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, 1, user.proyectile, 1000))
                         shoot = False
                 else:
                     if shoot and not pygame.mouse.get_pressed()[2]:
