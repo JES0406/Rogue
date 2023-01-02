@@ -34,6 +34,7 @@ pausa_state = False
 shoot = False
 ability = False
 slash = False
+sped_up = False
 clase = ""
 enemy_list = []
 enemy_bullets = pygame.sprite.Group()
