@@ -11,6 +11,7 @@ c = 0
 string_separated = []
 speed_1 = 1
 speed_2 = 10
+speed_3 = -10
 while c < len(string):
     if len(string) < tamaño_pantalla:
         string_separated.append(string)
@@ -56,6 +57,11 @@ while running and termine:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
+            if pygame.key.get_mods() & pygame.KMOD_LSHIFT:
+                if event.key == pygame.K_RETURN and not sped_up:
+                    for text in text_group:
+                        text.change_speed(speed_3)
+                        sped_up = True
             if event.key == pygame.K_RETURN and not sped_up:
                 for text in text_group:
                     text.change_speed(speed_2)
