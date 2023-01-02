@@ -4,10 +4,9 @@ from constantes import *
 from clases import *
 
 pygame.init()
-
-fuente = pygame.font.Font("Fuentes/starjedi/Starjhol.ttf", 50)
-string = "It was a cold grey day in late November. The weather had changed overnight, when a backing wind brought a granite sky and a mizzling rain with it, and although it was now only a little after two o clock in the afternoon the pallor of a winter evening seemed to have closed upon the hills, cloaking them in mist.                                                                      Gracias por jugar a este juego. Espero que os haya gustado. Si queréis seguir conmigo, podéis seguirme en mi cuenta de Instagram: @marcos elcovids"
-tamaño_pantalla = 20
+termine = False
+string = "Érase una vez una joven lechera que llevaba un cubo de leche en la cabeza, camino al mercado para venderla. Durante el camino, la soñadora joven iba imaginando lo que podría lograr conseguir con la leche. Pensó que en primer lugar y con el dinero de la venta compraría un canasto de huevos, los cuales una vez eclosionaran le permitiría montar una pequeña granja de pollos. Una vez estos crecieran podría venderlos, lo que le daría dinero para comprarse un lechón.Una vez este creciera la venta del animal bastaría para comprarse una ternera, con la leche de la cual seguiría obteniendo beneficios y a su vez podría tener terneros. Sin embargo, mientras iba pensando todas estas cosas la joven tropezó, lo que provocó que el cántaro cayera el suelo y se rompiera. Y con él, sus expectativas hacia lo que podría haber hecho con ella.”Este cuento, que cuenta con versiones de Esopo y La Fontaine (siendo este último el que hemos reflejado), nos enseña la necesidad de vivir en el presente y que a pesar de que soñar es necesario también debemos tener en cuenta que ello no basta para lograr nuestros propósitos. Inicialmente, es una pequeña historia que nos avisa de tener cuidado con que la ambición no nos haga perder el sentido.Asimismo, en algunas adaptaciones se incluye también un diálogo posterior entre la lechera y su madre, quien le cuenta que gracias a tener fantasías parecidas pudo lograr montar una granja: en este caso es una reflexión de que necesitamos soñar y ambicionar, pero cuidando lo que hacemos para llegar a cumplir los objetivos, además de no rendirnos ante el primer tropiezo u obstáculo."
+tamaño_pantalla = 30
 c = 0
 string_separated = []
 speed_1 = 1
@@ -21,9 +20,11 @@ while c < len(string):
             if string[c] == " ":
                 string_separated.append(string[:tamaño_pantalla])
                 string = string[tamaño_pantalla:]
+                termine = True
             else:
                 while string[c] != " ":
                     c -= 1
+                print(len(string))
                 string_separated.append(string[:c])
                 string = string[c:]
             c = 0
@@ -32,7 +33,7 @@ while c < len(string):
 class Texto(pygame.sprite.Sprite):
     def __init__(self, string, pos, size, speed = 1):
         pygame.sprite.Sprite.__init__(self)
-        self.fuente = pygame.font.Font("Fuentes/starjedi/Starjhol.ttf", size)
+        self.fuente = pygame.font.Font("Fuentes/starjedi/Starjedi.ttf", size)
         self.text = self.fuente.render(string, False, color_yellow_2)
         self.rect = self.text.get_rect(center = pos)
         self.image = self.text
@@ -48,9 +49,9 @@ class Texto(pygame.sprite.Sprite):
         screen.blit(self.text, self.rect)
 text_group = pygame.sprite.Group()
 for i in range(len(string_separated)):
-    text_group.add(Texto(string_separated[i], (ANCHO//2, ALTO//2 + 50*i), 50))
+    text_group.add(Texto(string_separated[i], (ANCHO//2, ALTO//2 + 70*i), 70))
 
-while running:
+while running and termine:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
