@@ -5,7 +5,10 @@ import funciones_globales as fn
 class Player(pygame.sprite.Sprite):
     def __init__(self, class_chosen):
         pygame.sprite.Sprite.__init__(self)
-        self.image = fn.chosen_sprite(class_chosen)
+        self.image = fn.chosen_sprite(class_chosen, 1)
+        self.animation_frame = 0
+        self.sprite_moving = 'None'
+        self.facing = 0
         self.position = [ANCHO//2, ALTO//2]
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
@@ -58,6 +61,7 @@ class Player(pygame.sprite.Sprite):
         self.HP = self.MaxHP
         self.Mana = self.MaxMana
         self.exp_to_level = 100 * self.level
+
         
     def health_bar(self):
         pygame.draw.rect(screen, color_red, (self.rect.x, self.rect.y - 10, self.rect.width, 5))
@@ -92,14 +96,18 @@ class Player(pygame.sprite.Sprite):
             pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
     
     def movement(self):
-        if pygame.key.get_pressed()[pygame.K_a] or pygame.key.get_pressed()[pygame.K_LEFT]:
-            mov_l = True
-        if pygame.key.get_pressed()[pygame.K_d] or pygame.key.get_pressed()[pygame.K_RIGHT]:
-            mov_r = True
         if pygame.key.get_pressed()[pygame.K_w] or pygame.key.get_pressed()[pygame.K_UP]:
             mov_u = True
+            self.sprite_moving = 'Right'
         if pygame.key.get_pressed()[pygame.K_s] or pygame.key.get_pressed()[pygame.K_DOWN]:
             mov_d = True
+            self.sprite_moving = 'Left'
+        if pygame.key.get_pressed()[pygame.K_a] or pygame.key.get_pressed()[pygame.K_LEFT]:
+            mov_l = True
+            self.sprite_moving = 'Left'
+        if pygame.key.get_pressed()[pygame.K_d] or pygame.key.get_pressed()[pygame.K_RIGHT]:
+            mov_r = True
+            self.sprite_moving = 'Right'
         if not pygame.key.get_pressed()[pygame.K_a] and not pygame.key.get_pressed()[pygame.K_LEFT]:
             mov_l = False
         if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_RIGHT]:
@@ -123,6 +131,15 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self):
+        if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
+            self.animation_frame = 0
+        if self.sprite_moving == 'Right' or self.sprite_moving == 'Left':
+            self.facing = 0
+            self.animation_frame += 1
+            if self.sprite_moving == 'Left': self.facing = 1
+        self.sprite_moving = 'None'
+        if self.facing: self.image = pygame.transform.flip(fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame), True, False)
+        else: self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.health_bar()
@@ -193,10 +210,9 @@ class Enemy(pygame.sprite.Sprite):
             speed_vector = -self.speed
         elif abs(distance - self.range) < self.speed *2 : speed_vector = 0 
         else: speed_vector = self.speed
-        if self.position[0] < self.speed + player.position[0]: self.position[0] += speed_vector
-        elif self.position[0] > self.speed + player.position[0]: self.position[0] -= speed_vector
-        if self.position[1] < self.speed + player.position[1]: self.position[1] += speed_vector
-        elif self.position[1] > self.speed + player.position[1]: self.position[1] -= speed_vector
+        if distance != 0:
+            self.position[0] += speed_vector * (player.position[0]-self.position[0])/(distance)
+            self.position[1] += speed_vector * (player.position[1]-self.position[1])/(distance)
 
     def attack(self, player):
         global enemy_bullets

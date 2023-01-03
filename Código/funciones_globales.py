@@ -70,7 +70,7 @@ def admins(marcos, pos_marcos, javi, pos_javi):
 def classes():
     knight_buttom = Button((120, 120), (570, 100), "Caballero", color_white, color_gray_1, color_white)
     knight_buttom.update()
-    knight = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (80, 80))
+    knight = pygame.transform.scale(pygame.image.load("Graphics/Clases/new_animation/knight.png").convert_alpha(), (80, 80))
     knight_rect = knight.get_rect(midright = (195, 160))
     screen.blit(knight, knight_rect)
     text(f"Caballero: Personaje melee", (195, 160), 20)
@@ -78,7 +78,7 @@ def classes():
 
     archer_buttom = Button((120, 220), (570, 100), "Arquero", color_white, color_gray_1, color_white)
     archer_buttom.update()
-    archer = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
+    archer = pygame.transform.scale(pygame.image.load("Graphics/Clases/new_animation/archer.png").convert_alpha(), (80, 80))
     archer_rect = archer.get_rect(midright = (195, 260))
     screen.blit(archer, archer_rect)
     text(f"Arquero: Personaje a distancia", (195, 260), 20)
@@ -86,7 +86,7 @@ def classes():
 
     mage_buttom = Button((120, 320), (570, 100), "Mago", color_white, color_gray_1, color_white)
     mage_buttom.update()
-    mage = pygame.transform.scale(pygame.image.load("Graphics/Clases/mage.png").convert_alpha(), (80, 80))
+    mage = pygame.transform.scale(pygame.image.load("Graphics/Clases/new_animation/mage.png").convert_alpha(), (80, 80))
     mage_rect = mage.get_rect(midright = (195, 360))
     screen.blit(mage, mage_rect)
     text(f"Mago: Personaje a distancia", (195, 360), 20)
@@ -94,7 +94,7 @@ def classes():
 
     healer_buttom = Button((120, 420), (570, 80), "Curandero", color_white, color_gray_1, color_white)
     healer_buttom.update()
-    healer = pygame.transform.scale(pygame.image.load("Graphics/Clases/healer.png").convert_alpha(), (80, 80))
+    healer = pygame.transform.scale(pygame.image.load("Graphics/Clases/new_animation/healer.png").convert_alpha(), (80, 80))
     healer_rect = healer.get_rect(midright = (195, 460))
     screen.blit(healer, healer_rect)
     text(f"Curandero: Personaje de apoyo", (195, 460), 20)
@@ -103,18 +103,18 @@ def classes():
     button_list = [knight_buttom, archer_buttom, mage_buttom, healer_buttom]
     return button_list
 
-def chosen_sprite(choice):
+def chosen_sprite(choice, frame):
     if choice == "Caballero":
-        class_image = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/knight{frame}.png").convert_alpha(), (100, 100))
     
     elif choice == "Arquero":
-        class_image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/archer{frame}.png").convert_alpha(), (100, 100))
     
     elif choice == "Mago":
-        class_image = pygame.transform.scale(pygame.image.load("Graphics/Clases/mage.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/mage{frame}.png").convert_alpha(), (100, 100))
 
     elif choice == "Curandero":
-        class_image = pygame.transform.scale(pygame.image.load("Graphics/Clases/healer.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/healer{frame}.png").convert_alpha(), (100, 100))
 
     return class_image
 

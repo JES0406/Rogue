@@ -109,7 +109,6 @@ while running:
                         nombre_str += event.unicode.upper()
 
         elif juego_state:
-            ### Start moving here
             if level_up:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
@@ -194,7 +193,7 @@ while running:
             fn.text(f"OsTrAs...", (100, 550), 60)
             fn.text(f"Casi se nos olvida.", (350, 560), 20)
             fn.text(f"Clase: {clase}", (150, 150), 20)
-            class_image = fn.chosen_sprite(clase)
+            class_image = fn.chosen_sprite(clase, 1)
             class_rect = class_image.get_rect(center = (210, 210))
             screen.blit(class_image, class_rect)
             hide()
@@ -210,7 +209,7 @@ while running:
         except IndexError:
             for j in range (0, LONGITUD_NOMBRE - len(nombre_str)):
                 pygame.draw.rect(screen, color_black, (257 + (i+j)*35, 230, 25, 4), border_radius=20)
-        class_image = fn.chosen_sprite(clase)
+        class_image = fn.chosen_sprite(clase, 1)
         class_rect = class_image.get_rect(center = (170, 150))
         screen.blit(class_image, class_rect)
         fn.text(f"Como te llamas?", (220, 150), 40)
@@ -344,8 +343,23 @@ while running:
             fn.text(f"Estadisticas:", (220, 150), 40)
             fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
             fn.text(f"Clase: {clase}", (220, 250), 40)
-        
-
+            text =  open('Estadísticas.txt', 'a')
+            #text.write(f'''
+            #==================================================================================================================
+            #Aquí yace {nombre_str.rstrip()}, el {clase} más 
+            #{random.choice(adjetivos)} que haya visto este reino. 
+            #La leyenda dice que comprendió
+            #{random.choice(temario)}
+            #justo antes de su muerte. Muchos dudan 
+            #que sea cierto, pero si en algún momento 
+            #lo supo, este valioso conocimiento le
+            #acompañó a la tumba. 
+            #Además, Alcanzó una puntuación de {player.exp}.
+            #Gracias por haber jugado.
+            #==================================================================================================================
+            #''')
+            #dtext.close()
+                    
 
 
     
