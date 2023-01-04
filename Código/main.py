@@ -350,7 +350,7 @@ while running:
             #{random.choice(adjetivos)} que haya visto este reino. 
             #La leyenda dice que comprendió
             #{random.choice(temario)}
-            #justo antes de su muerte. Muchos dudan 
+            #justo antes de su muerte. Muc  hos dudan 
             #que sea cierto, pero si en algún momento 
             #lo supo, este valioso conocimiento le
             #acompañó a la tumba. 

@@ -129,6 +129,12 @@ class Player(pygame.sprite.Sprite):
         if mov_u and self.position[1] > 0: self.position[1] -= movespeed
         elif mov_d and self.position[1] < mapheight - self.size[1]: self.position[1] += movespeed
 
+    def death_animation(self):
+        self.animation_frame += 1
+        if self.animation_frame//ticks_per_frame >= frames_per_animation_loop:
+            self.animation_frame = 0
+        self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
+        if self.facing: self.image = pygame.transform.flip(self.image, True, False)
 
     def update(self):
         if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
@@ -154,6 +160,10 @@ class Player(pygame.sprite.Sprite):
             self.Mana = self.MaxMana
         self.exp_bar()
         self.movement()
+        if self.HP <= 0:
+            self.kill()
+            self.HP = 0
+
     
     def __str__(self) -> str:
         return f"HP: {self.HP} Mana: {self.Mana} Speed: {self.speed} Damage: {self.hitpoint} Range: {self.range} Level: {self.level}, Exp: {self.exp}"

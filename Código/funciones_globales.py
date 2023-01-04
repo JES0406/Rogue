@@ -105,16 +105,16 @@ def classes():
 
 def chosen_sprite(choice, frame):
     if choice == "Caballero":
-        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/knight{frame}.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/knight{frame}.png").convert_alpha(), (80, 80))
     
     elif choice == "Arquero":
-        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/archer{frame}.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/archer{frame}.png").convert_alpha(), (80, 80))
     
     elif choice == "Mago":
-        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/mage{frame}.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/mage{frame}.png").convert_alpha(), (80, 80))
 
     elif choice == "Curandero":
-        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/healer{frame}.png").convert_alpha(), (100, 100))
+        class_image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/healer{frame}.png").convert_alpha(), (80, 80))
 
     return class_image
 
