@@ -12,6 +12,7 @@ color_red_2 = '#8B0000'
 color_yellow_2 = '#FFD700'
 color_green_2 = '#006400'
 color_blue_2 = '#00008B'
+color_black_1 = (0,0,0)
 # Propiedades
 ANCHO = 800
 ALTO = 600

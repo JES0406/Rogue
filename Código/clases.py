@@ -136,6 +136,9 @@ class Player(pygame.sprite.Sprite):
         self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
         if self.facing: self.image = pygame.transform.flip(self.image, True, False)
 
+    def death_animation(self):
+        pass        
+
     def update(self):
         if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
             self.animation_frame = 0
@@ -161,8 +164,8 @@ class Player(pygame.sprite.Sprite):
         self.exp_bar()
         self.movement()
         if self.HP <= 0:
-            self.kill()
             self.HP = 0
+            self.death_animation()
 
     
     def __str__(self) -> str:
