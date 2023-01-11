@@ -114,7 +114,7 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
-                    user = (clase)
+                    user = Player(clase)
                     player.add(user)
                     nombre_state = False
                     juego_state = True
@@ -168,22 +168,21 @@ while running:
                 
 
         elif end_state:
-            if escena == 1:
-                if event.type == pygame.KEYDOWN:
-                    if pygame.key.get_mods() & pygame.KMOD_LSHIFT:
-                        if event.key == pygame.K_RETURN and not sped_up:
-                            for text in text_group:
-                                text.change_speed(speed_3)
-                                sped_up = True
+            if event.type == pygame.KEYDOWN:
+                if pygame.key.get_mods() & pygame.KMOD_LSHIFT:
                     if event.key == pygame.K_RETURN and not sped_up:
                         for text in text_group:
-                            text.change_speed(speed_2)
+                            text.change_speed(speed_3)
                             sped_up = True
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        for text in text_group:
-                            text.change_speed(speed_1)
-                            sped_up = False
+                if event.key == pygame.K_RETURN and not sped_up:
+                    for text in text_group:
+                        text.change_speed(speed_2)
+                        sped_up = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    for text in text_group:
+                        text.change_speed(speed_1)
+                        sped_up = False
                     
 
 
@@ -375,31 +374,7 @@ while running:
             c_for_time += 1
 
     elif end_state:
-        # if escena == 1:
-        #     screen.fill(color_green)
-        #     fn.text_box(show)
-        #     fn.admins(True, (400, 500), True, (400, 500))
-        #     fn.text(f"Gracias por jugar a iMAT", (100, 530),20)
-        #     fn.text(f"Esperamos que te haya gustado.", (100, 550), 20)
-        #     fn.text(f"Presiona ENTER para ver tus estadisticas.", (100, 570), 20)
-        #     hide()
         if escena == 1:
-            screen.fill(color_green)
-            fn.text_box(show)
-            fn.admins(True, (400, 500), True, (400, 500))
-            fn.text(f"Gracias por jugar a iMAT", (100, 530),20)
-            fn.text(f"Esperamos que te haya gustado.", (100, 550), 20)
-            fn.text(f"Presiona ENTER para ver tus estadisticas.", (100, 570), 20)
-
-            hide()
-        elif escena == 2:
-            screen.fill(color_white)
-            pygame.draw.rect(screen, color_black, (110, 90, 580, 200), border_radius=20)
-            pygame.draw.rect(screen, color_white, (120, 100, 560, 180), border_radius=20)
-            fn.text(f"Estadisticas:", (220, 150), 40)
-            fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
-            fn.text(f"Clase: {clase}", (220, 250), 40)
-            text =  open('Estadísticas.txt', 'a')
             screen.fill(color_black_1)
             if len(text_group) == 0:
                 creditos = divide_str(f"Aquí yace {nombre_str.rstrip()}, el {clase} más {random.choice(adjetivos)} que haya visto este reino. Tardó {minutos} minutos con {segundos} segundos en morir. La leyenda dice que entendió \"{random.choice(hazanhas)}\" justo antes de morir.")
@@ -407,8 +382,27 @@ while running:
                     text_group.add(Texto(creditos[i], (ANCHO//2, ALTO + 70*i), 70, 1))
             text_group.update()
             text_group.draw(screen)
-            
-                    
+            print(text_group.sprites()[-1].size)
+            if text_group.sprites()[-1].size == 0:
+                text_group.empty()
+                escena = 2
+        if escena == 2:
+            screen.fill(color_black_1)
+            if len(text_group) == 0:
+                creditos = divide_str(f"Gracias por jugar a iMAT.Nos ha costado mucho trabajo hacer este proyecto; esperamos que te haya gustado y hasta la versión 1.0.")
+                for i in range(len(creditos)):
+                    text_group.add(Texto(creditos[i], (ANCHO//2, ALTO + 70*i), 70, 1))
+            text_group.update()
+            text_group.draw(screen)
+            if text_group.sprites()[-1].size == 0:
+                text_group.empty()
+                escena = 3
+        if escena == 3:
+                fuente = pygame.font.Font("Fuentes/starjedi/Starjhol.ttf", 70)
+                text = fuente.render("@", True, color_yellow_2)
+                rect = text.get_rect(center = (ANCHO//2, ALTO//2))
+                screen.blit(text, rect)
+
 
 
 
