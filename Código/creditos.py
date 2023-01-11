@@ -6,7 +6,6 @@ from clases import *
 pygame.init()
 termine = False
 string = "En un punto de la historia indeterminado, dos amigos fueron a Austria a esquiar, ¿Qué destino les deparará?, ¿perderán el tren?, ¿Se romperan las piernas?; sólo el destino lo sabe"
-tamaño_pantalla = 30
 c = 0
 string_separated = []
 speed_1 = 1

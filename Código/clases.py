@@ -14,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.size = self.image.get_size()
         self.class_chosen = class_chosen
+        self.frame = 0
         if self.class_chosen == "Caballero": 
             self.speed = 4
             self.MaxHP = 100
@@ -24,6 +25,7 @@ class Player(pygame.sprite.Sprite):
             self.proyectile = "slash.png"
             self.proyectile_size = 300
             self.proyectile_speed = 0
+            self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Knight\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Mago": 
             self.speed = 2
             self.MaxHP = 60
@@ -34,9 +36,10 @@ class Player(pygame.sprite.Sprite):
             self.proyectile = "fireball.png"
             self.proyectile_size = 30
             self.proyectile_speed = 10
+            self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Wizzard\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Arquero": 
             self.speed = 6
-            self.MaxHP = 40
+            self.MaxHP = 0
             self.hitpoint = 20
             self.HPregen = 0.05
             self.range = 60
@@ -44,6 +47,7 @@ class Player(pygame.sprite.Sprite):
             self.proyectile = "arrow.png"
             self.proyectile_size = 30
             self.proyectile_speed = 10
+            self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Rogue\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Curandero": 
             self.speed = 4
             self.MaxHP = 80
@@ -54,7 +58,9 @@ class Player(pygame.sprite.Sprite):
             self.proyectile = "heal.png"
             self.proyectile_size = 30
             self.proyectile_speed = 2
-
+            self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Enemy\Orc Crew\Orc - Shaman\Death\Death-Sheet.png").convert_alpha()
+        
+        self.death_size = self.death_sheet.get_size()[0]//6
         self.Manaregen = 0.2
         self.exp = 0
         self.level = 0
@@ -129,43 +135,43 @@ class Player(pygame.sprite.Sprite):
         if mov_u and self.position[1] > 0: self.position[1] -= movespeed
         elif mov_d and self.position[1] < mapheight - self.size[1]: self.position[1] += movespeed
 
-    def death_animation(self):
-        self.animation_frame += 1
-        if self.animation_frame//ticks_per_frame >= frames_per_animation_loop:
-            self.animation_frame = 0
-        self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
-        if self.facing: self.image = pygame.transform.flip(self.image, True, False)
-
-    def death_animation(self):
-        pass        
+    def death_animation(self, frame):
+        death_frames = fn.frame_list_maker(self.death_sheet, self.death_size, color_black_1, 6)
+        if frame < 6:
+            self.image = death_frames[int(frame)]
+            
+                
 
     def update(self):
-        if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
-            self.animation_frame = 0
-        if self.sprite_moving == 'Right' or self.sprite_moving == 'Left':
-            self.facing = 0
-            self.animation_frame += 1
-            if self.sprite_moving == 'Left': self.facing = 1
-        self.sprite_moving = 'None'
-        if self.facing: self.image = pygame.transform.flip(fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame), True, False)
-        else: self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
-        self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
-        self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
-        self.health_bar()
-        self.mana_bar()
-        if self.HP < self.MaxHP:
-            self.HP += self.HPregen
-        elif self.HP > self.MaxHP:
-            self.HP = self.MaxHP
-        if self.Mana < self.MaxMana:
-            self.Mana += self.Manaregen
-        elif self.Mana > self.MaxMana:
-            self.Mana = self.MaxMana
-        self.exp_bar()
-        self.movement()
         if self.HP <= 0:
             self.HP = 0
-            self.death_animation()
+            self.death_animation(int(self.frame))
+            self.frame += 0.2
+        else:
+            if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
+                self.animation_frame = 0
+            if self.sprite_moving == 'Right' or self.sprite_moving == 'Left':
+                self.facing = 0
+                self.animation_frame += 1
+                if self.sprite_moving == 'Left': self.facing = 1
+            self.sprite_moving = 'None'
+            if self.facing: self.image = pygame.transform.flip(fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame), True, False)
+            else: self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
+            self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
+            self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
+            self.health_bar()
+            self.mana_bar()
+            if self.HP < self.MaxHP:
+                self.HP += self.HPregen
+            elif self.HP > self.MaxHP:
+                self.HP = self.MaxHP
+            if self.Mana < self.MaxMana:
+                self.Mana += self.Manaregen
+            elif self.Mana > self.MaxMana:
+                self.Mana = self.MaxMana
+            self.exp_bar()
+            self.movement()
+        print(self.frame)
 
     
     def __str__(self) -> str:
@@ -235,7 +241,7 @@ class Enemy(pygame.sprite.Sprite):
                 player.HP -= self.hitpoint
         elif self.type == "Ranged":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
-                enemy_bullets.add(Projectile(self.position, player.position, 25, self.hitpoint, 0, "arrow.png"))
+                enemy_bullets.add(Projectile(self.position, player.position, 25, self.speed, self.hitpoint, "arrow.png"))
 
     def update(self, player):
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
@@ -278,3 +284,31 @@ class Projectile(pygame.sprite.Sprite):
         self.time_to_destroy -= 1
         if self.time_to_destroy <= 0:
             self.kill()
+
+class Texto(pygame.sprite.Sprite):
+    def __init__(self, string, pos, size, speed = 1):
+        pygame.sprite.Sprite.__init__(self)
+        self.string = string
+        self.fuente = pygame.font.Font("Fuentes/starjedi/Starjedi.ttf", size)
+        self.text = self.fuente.render(string, False, color_yellow_2)
+        self.rect = self.text.get_rect(center = pos)
+        self.pos = pos
+        self.speed = speed
+        self.size = size
+    
+    def change_speed(self, speed):
+        self.speed = speed
+
+    def update(self):
+        if self.size >= 0:
+            self.size = (self.pos[1])/6
+            if self.size < 0:
+                self.size = 0
+        print(self.size)
+        self.fuente = pygame.font.Font("Fuentes/starjedi/Starjedi.ttf", int(self.size))
+        self.text = self.fuente.render(self.string, False, color_yellow_2)
+        self.image = self.text
+        self.pos = (self.pos[0], self.pos[1] - self.speed)
+
+        self.rect = self.image.get_rect(center = self.pos)
+        screen.blit(self.image, self.rect)
