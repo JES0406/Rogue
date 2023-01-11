@@ -93,7 +93,7 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
-                    user = Player(clase)
+                    user = (clase)
                     player.add(user)
                     nombre_state = False
                     juego_state = True
@@ -344,25 +344,9 @@ while running:
             fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
             fn.text(f"Clase: {clase}", (220, 250), 40)
             text =  open('Estadísticas.txt', 'a')
-            #text.write(f'''
-            #==================================================================================================================
-            #Aquí yace {nombre_str.rstrip()}, el {clase} más 
-            #{random.choice(adjetivos)} que haya visto este reino. 
-            #La leyenda dice que comprendió
-            #{random.choice(temario)}
-            #justo antes de su muerte. Muc  hos dudan 
-            #que sea cierto, pero si en algún momento 
-            #lo supo, este valioso conocimiento le
-            #acompañó a la tumba. 
-            #Además, Alcanzó una puntuación de {player.exp}.
-            #Gracias por haber jugado.
-            #==================================================================================================================
-            #''')
-            #dtext.close()
-                    
 
 
-    
+
     else:
         screen.fill((0,255,0))
 

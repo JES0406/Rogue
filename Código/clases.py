@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.size = self.image.get_size()
         self.class_chosen = class_chosen
         if self.class_chosen == "Caballero": 
+            self.weapon = 0
             self.speed = 4
             self.MaxHP = 100
             self.hitpoint = 10
@@ -25,6 +26,7 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_size = 300
             self.proyectile_speed = 0
         elif self.class_chosen == "Mago": 
+            self.weapon = 1
             self.speed = 2
             self.MaxHP = 60
             self.hitpoint = 20
@@ -35,6 +37,7 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_size = 30
             self.proyectile_speed = 10
         elif self.class_chosen == "Arquero": 
+            self.weapon = 2
             self.speed = 6
             self.MaxHP = 40
             self.hitpoint = 20
@@ -45,6 +48,7 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_size = 30
             self.proyectile_speed = 10
         elif self.class_chosen == "Curandero": 
+            self.weapon = 3
             self.speed = 4
             self.MaxHP = 80
             self.hitpoint = 5
@@ -187,14 +191,16 @@ class Button():
         pygame.draw.rect(screen,self.color[self.hovering],self.rect, border_radius=10)
         screen.blit(self.text_surface, (self.pos[0],self.pos[1] + 20))
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, type):
         pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/new_animation/Ranged1.png").convert_alpha(), (80, 80))
         self.type = type
+        self.animation_frame = 0
         if self.type == "Melee":
             self.HP = 100
             self.range = 10
-            self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/knight.png").convert_alpha(), (80, 80))
             self.speed = 1
             self.hitpoint = 5
             self.attack_timer = 0
@@ -202,7 +208,6 @@ class Enemy(pygame.sprite.Sprite):
         elif self.type == "Ranged":
             self.HP = 50
             self.range = 100
-            self.image = pygame.transform.scale(pygame.image.load("Graphics/Clases/archer.png").convert_alpha(), (80, 80))
             self.speed = 2
             self.hitpoint = 10
             self.attack_timer = 0
@@ -235,7 +240,13 @@ class Enemy(pygame.sprite.Sprite):
                 enemy_bullets.add(Projectile(self.position, player.position, 25, self.hitpoint, 0, "arrow.png"))
 
     def update(self, player):
+        if 1 + self.animation_frame//ticks_per_frame >= frames_per_animation_loop: 
+            self.animation_frame = 0
+        self.animation_frame += 1
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
+        self.image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/{self.type}{1 + self.animation_frame//ticks_per_frame}.png").convert_alpha(), (80, 80))
+        #if player.position[0] <= self.position[0]:
+            #self.image = pygame.transform.flip(self.image, True, False)
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.move(player)
         if self.HP <= 0:
@@ -265,6 +276,7 @@ class Projectile(pygame.sprite.Sprite):
         
 
     def update(self):
+
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.position[0] += self.speed_x
