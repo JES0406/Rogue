@@ -375,22 +375,6 @@ while running:
 
     elif end_state:
         if escena == 1:
-            screen.fill(color_green)
-            fn.text_box(show)
-            fn.admins(True, (400, 500), True, (400, 500))
-            fn.text(f"Gracias por jugar a iMAT", (100, 530),20)
-            fn.text(f"Esperamos que te haya gustado.", (100, 550), 20)
-            fn.text(f"Presiona ENTER para ver tus estadisticas.", (100, 570), 20)
-
-            hide()
-        elif escena == 2:
-            screen.fill(color_white)
-            pygame.draw.rect(screen, color_black, (110, 90, 580, 200), border_radius=20)
-            pygame.draw.rect(screen, color_white, (120, 100, 560, 180), border_radius=20)
-            fn.text(f"Estadisticas:", (220, 150), 40)
-            fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
-            fn.text(f"Clase: {clase}", (220, 250), 40)
-            text =  open('Estadísticas.txt', 'a')
             screen.fill(color_black_1)
             if len(text_group) == 0:
                 creditos = divide_str(f"Aquí yace {nombre_str.rstrip()}, el {clase} más {random.choice(adjetivos)} que haya visto este reino. Tardó {minutos} minutos con {segundos} segundos en morir. La leyenda dice que entendió \"{random.choice(hazanhas)}\" justo antes de morir.")
@@ -418,6 +402,7 @@ while running:
                 text = fuente.render("@", True, color_yellow_2)
                 rect = text.get_rect(center = (ANCHO//2, ALTO//2))
                 screen.blit(text, rect)
+
 
 
 
