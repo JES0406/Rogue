@@ -47,6 +47,8 @@ def background(state_str, role = None):
         string = "desierto.png"
     elif state_str == "level_up":
         string = "level_up.png"
+    elif state_str == "death":
+        string = "dead.png"
         
     if state_str == "game":
         fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/{string}").convert_alpha(), (mapwidth, mapheight))
@@ -133,3 +135,16 @@ def calc_distance(point_A:list, point_B:list) -> float:
 
 def relative_pos(position, coordinate:int) -> int:
     return position[coordinate] - camera_left_top[coordinate]
+
+def get_image(sheet, width, height, color, frame):
+    image = pygame.Surface((width, height)).convert_alpha()
+    image.blit(sheet, (0,0), (0 + width*frame, 0, width + width*frame, height))
+    image = pygame.transform.scale(image, (width*2, height*2))
+    image.set_colorkey(color)
+    return image
+
+def frame_list_maker(sheet, frame_size, color, frames_number):
+    frame_list = []
+    for frame in range(0,frames_number):
+        frame_list.append(get_image(sheet, frame_size, frame_size, color, frame))
+    return frame_list 

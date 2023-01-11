@@ -1,7 +1,7 @@
 import pygame, sys, random, math, time, os
 import funciones_globales as fn 
 from constantes import *
-from clases import Player, Button, Enemy, Projectile
+from clases import Player, Button, Enemy, Projectile, Texto
 
 
 pygame.init()
@@ -22,11 +22,34 @@ def draw_minimap(user):
     pygame.draw.rect(screen, 'Black', pygame.Rect(0,0,ANCHO / 4, ALTO / 4))
     pygame.draw.rect(screen, color_green, pygame.Rect(user.position[0]/8,user.position[1]/8,user.size[0]/8, user.size[0]/8))
 
+def divide_str(string):
+    string_separated = []
+    c = 0
+    termine = False
+    while c < len(string):
+        if len(string) < tamaño_pantalla:
+            string_separated.append(string)
+            c = tamaño_pantalla
+        else:    
+            if c == tamaño_pantalla:
+                if string[c] == " " or string[c] == "," or string[c] == "." or string[c] == ";":
+                    string_separated.append(string[:tamaño_pantalla])
+                    string = string[tamaño_pantalla:]
+                    termine = True
+                else:
+                    if string.count(" ")>= 1:
+                        while string[c] != " " and string[c] != "," and string[c] != "." and string[c] != ";":
+                            c -= 1
+                    print(len(string))
+                    string_separated.append(string[:c])
+                    string = string[c:]
+                c = 0
+        c += 1
+    if len(string) <= tamaño_pantalla:
+        termine = True
+    if termine:
+        return string_separated
 
-
-show = True
-
-bushes = pygame.sprite.Group()
 class Bush(pygame.sprite.Sprite):
     def __init__(self,choice = "1"):
         super().__init__(bushes)
@@ -42,7 +65,6 @@ class Bush(pygame.sprite.Sprite):
     def update(self):
         self.rect = self.image.get_rect(center = (fn.relative_pos(self.pos, 0), fn.relative_pos(self.pos, 1)))
 while len(bushes) < 100:
-    print(len(bushes))
     bush = Bush(random.choice(["1", "2", "3"]))
     if not pygame.sprite.spritecollideany(bush, bushes):  
         bushes.add(bush)
@@ -82,7 +104,6 @@ while running:
                                 clase = "Arquero"
                             elif n == 4:
                                 clase = "Curandero"
-                            c = 0
                         escena += 1
                 if event.key == pygame.K_ESCAPE:
                     inicio_state = True
@@ -116,10 +137,6 @@ while running:
                     choice += event.unicode.upper()
             else:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        escena = 1
-                        juego_state = False
-                        end_state = True
                     if event.key == pygame.K_ESCAPE:
                         pausa_state = True 
                     
@@ -142,7 +159,7 @@ while running:
                         target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
                         angle = math.degrees(math.atan2(user.position[1] - target[1], user.position[0] - target[0]))
                         pos = (user.relative_pos[0] - 50 * math.cos(math.radians(angle)), user.relative_pos[1] - 50 * math.sin(math.radians(angle)))
-                        print(angle)
+
                         slash_img = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("Graphics/Clases/proyectiles/slash.png")\
                             .convert_alpha(), (75, 75)), angle)
                         slash_rect = slash_img.get_rect(center = pos)
@@ -151,12 +168,22 @@ while running:
                 
 
         elif end_state:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    if escena == 2:
-                        end_state = False
-                    else:
-                        escena += 1
+            if escena == 1:
+                if event.type == pygame.KEYDOWN:
+                    if pygame.key.get_mods() & pygame.KMOD_LSHIFT:
+                        if event.key == pygame.K_RETURN and not sped_up:
+                            for text in text_group:
+                                text.change_speed(speed_3)
+                                sped_up = True
+                    if event.key == pygame.K_RETURN and not sped_up:
+                        for text in text_group:
+                            text.change_speed(speed_2)
+                            sped_up = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        for text in text_group:
+                            text.change_speed(speed_1)
+                            sped_up = False
                     
 
 
@@ -275,13 +302,26 @@ while running:
             if exit_button.rect.collidepoint(pygame.mouse.get_pos()):
                 if pygame.mouse.get_pressed()[0]:
                     running = False
-            
+        elif death_state:
+            for i in enemeies:
+                i.kill()
+            fondo = pygame.transform.scale(pygame.image.load(f"Graphics/Fondos/dead.png").convert_alpha(), (ANCHO, ALTO))
+            fondo_rect = fondo.get_rect(center = (ANCHO/2, ALTO/2))
+            screen.blit(fondo, fondo_rect)
+            if fondo_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                juego_state = False
+                end_state = True
+                escena = 1
         else:
             enemy_timer += 1
-            if enemy_timer == 60:
+            if enemy_timer == int(enemy_spawn_rate):
                 enemy_pos = (random.randint(0, ALTO- 50), random.randint(0, ANCHO - 100))
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
+                p += 1
                 enemy_timer = 0
+            if p == 10:
+                enemy_spawn_rate *= 0.9
+                p = 0
                 
             enemies_hit = pygame.sprite.groupcollide(enemeies, bullets, False, True)
             for enemy in enemies_hit:
@@ -297,6 +337,13 @@ while running:
             bushes.update()
             bushes.draw(screen)
             player.update()
+            if user.frame >= 6:
+                death_state = True
+                print(c_for_time)
+                minutos = c_for_time//3600
+                segundos = c_for_time//60 - minutos*60
+            
+            
             enemeies.update(user)
             bullets.update()
             enemy_bullets.update()
@@ -325,8 +372,17 @@ while running:
             enemy_bullets.draw(screen)
             
             draw_minimap(user)
+            c_for_time += 1
 
     elif end_state:
+        # if escena == 1:
+        #     screen.fill(color_green)
+        #     fn.text_box(show)
+        #     fn.admins(True, (400, 500), True, (400, 500))
+        #     fn.text(f"Gracias por jugar a iMAT", (100, 530),20)
+        #     fn.text(f"Esperamos que te haya gustado.", (100, 550), 20)
+        #     fn.text(f"Presiona ENTER para ver tus estadisticas.", (100, 570), 20)
+        #     hide()
         if escena == 1:
             screen.fill(color_green)
             fn.text_box(show)
@@ -344,12 +400,21 @@ while running:
             fn.text(f"Nombre: {nombre_str.rstrip()}", (220, 200), 40)
             fn.text(f"Clase: {clase}", (220, 250), 40)
             text =  open('Estadísticas.txt', 'a')
+            screen.fill(color_black_1)
+            if len(text_group) == 0:
+                creditos = divide_str(f"Aquí yace {nombre_str.rstrip()}, el {clase} más {random.choice(adjetivos)} que haya visto este reino. Tardó {minutos} minutos con {segundos} segundos en morir. La leyenda dice que entendió \"{random.choice(hazanhas)}\" justo antes de morir.")
+                for i in range(len(creditos)):
+                    text_group.add(Texto(creditos[i], (ANCHO//2, ALTO + 70*i), 70, 1))
+            text_group.update()
+            text_group.draw(screen)
+            
+                    
 
 
 
     else:
         screen.fill((0,255,0))
 
-    
+    extra_counter += 0.0001
     pygame.display.update()
     clock.tick(fps)

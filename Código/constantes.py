@@ -12,6 +12,7 @@ color_red_2 = '#8B0000'
 color_yellow_2 = '#FFD700'
 color_green_2 = '#006400'
 color_blue_2 = '#00008B'
+color_black_1 = (0,0,0)
 # Propiedades
 ANCHO = 800
 ALTO = 600
@@ -21,6 +22,11 @@ screen = pygame.display.set_mode((ANCHO, ALTO))
 clock = pygame.time.Clock()
 fps = 60
 LONGITUD_NOMBRE = 10
+tamaño_pantalla = 30
+speed_1 = 1
+speed_2 = 10
+speed_3 = -10
+
 
 mapwidth = 2 * ANCHO
 mapheight = 2 * ALTO
@@ -33,26 +39,35 @@ nombre_state = False
 juego_state = False
 level_up = False
 pausa_state = False
+end_state = False
 shoot = False
 ability = False
 slash = False
 sped_up = False
+show = True
+death_state = False
+extra_counter = 0
 clase = ""
 enemy_list = []
 enemy_bullets = pygame.sprite.Group()
 player = pygame.sprite.GroupSingle()
 enemeies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+text_group = pygame.sprite.Group()
+bushes = pygame.sprite.Group()
 
 choice = ""
 enemy_timer = 0
+enemy_spawn_rate = 60
+p = 0
+dead_counter = 0
 
 abecedario = [chr(i + 65) for i in range(26)]; abecedario.append(' ') # Lo mismo pero este le gusta a David porque está DRY 😉 JAajjajaja
 
 enemy_types = ["Melee", "Ranged"]
 
 adjetivos = ['valiente', 'hermoso', 'torpe', 'odiado', 'temido', 'avaricioso', 'astuto', 'incauto']
-temario = [
+hazanhas = [
 'el concepto de L(S)', 'el teorema de Reflexividad Dual', 'la equivalencia del logaritmo', 'las V.A. multivariantes',
 'su fallo en el examen de física', 'la diapositiva de "el hecho religioso"', 'el motivo de modularizar el código',
 'las sumas de series telescópicas', 'cómo funcionan los objetos de Python', 'los diccionarios de Python',
@@ -72,3 +87,4 @@ temario = [
 'la manera de identificar una serie numérica y el criterio a utilizar en cada caso',
 'para qué sirven los créditos de las asignaturas',
 ]
+c_for_time = 0
