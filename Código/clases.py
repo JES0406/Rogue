@@ -254,8 +254,8 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_frame += 1
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.image = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/{self.type}{1 + self.animation_frame//ticks_per_frame}.png").convert_alpha(), (80, 80))
-        #if player.position[0] <= self.position[0]:
-            #self.image = pygame.transform.flip(self.image, True, False)
+        if player.position[0] <= self.position[0]:
+            self.image = pygame.transform.flip(self.image, True, False)
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
         self.move(player)
         if self.HP <= 0:

@@ -114,7 +114,7 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if nombre_str == "":
                         nombre_str = "EMPTY_NAME"
-                    user = (clase)
+                    user = Player(clase)
                     player.add(user)
                     nombre_state = False
                     juego_state = True
