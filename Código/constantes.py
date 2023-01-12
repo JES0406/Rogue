@@ -41,6 +41,7 @@ level_up = False
 pausa_state = False
 end_state = False
 shoot = False
+shooting = False
 ability = False
 slash = False
 sped_up = False
@@ -61,7 +62,7 @@ enemy_timer = 0
 enemy_spawn_rate = 60
 p = 0
 dead_counter = 0
-
+enemy_cap = 50
 abecedario = [chr(i + 65) for i in range(26)]; abecedario.append(' ') # Lo mismo pero este le gusta a David porque está DRY 😉 JAajjajaja
 
 enemy_types = ["Melee", "Ranged"]

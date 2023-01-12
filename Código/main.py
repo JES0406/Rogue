@@ -147,24 +147,13 @@ while running:
                         target = (fn.relative_pos(pygame.mouse.get_pos(), 0) + camera_left_top[0], fn.relative_pos(pygame.mouse.get_pos(), 1) + camera_left_top[1])
                         user.ability(target)
                 if pygame.mouse.get_pressed()[2]:
+                    shooting = True
                     shoot = True
-                if user.class_chosen != "Caballero":
-                    if shoot and not pygame.mouse.get_pressed()[2]:
-                        target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
-                        bullets.add(Projectile(user.position, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, user.proyectile, 1000))
-                        shoot = False
-                else:
-                    if shoot and not pygame.mouse.get_pressed()[2] and not slash:
-                        slash = True
-                        target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
-                        angle = math.degrees(math.atan2(user.position[1] - target[1], user.position[0] - target[0]))
-                        pos = (user.relative_pos[0] - 50 * math.cos(math.radians(angle)), user.relative_pos[1] - 50 * math.sin(math.radians(angle)))
+                if event.type == pygame.MOUSEBUTTONUP:
+                    shooting = False
+                
 
-                        slash_img = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("Graphics/Clases/proyectiles/slash.png")\
-                            .convert_alpha(), (75, 75)), angle)
-                        slash_rect = slash_img.get_rect(center = pos)
-                        slash_count = 0
-                        shoot = False
+                
                 
 
         elif end_state:
@@ -287,6 +276,7 @@ while running:
                 count = 0
             else:
                 count += 1
+        
         elif pausa_state:
             pygame.draw.rect(screen, color_black, (140, 90, 580, ALTO - 150), border_radius=20)
             pygame.draw.rect(screen, color_white, (150, 100, 560, ALTO - 170), border_radius=20)
@@ -314,7 +304,7 @@ while running:
         else:
             enemy_timer += 1
             if enemy_timer == int(enemy_spawn_rate):
-                enemy_pos = (random.randint(0, ALTO- 50), random.randint(0, ANCHO - 100))
+                enemy_pos = (random.randint(0, mapwidth- 50), random.randint(0, mapheight - 100))
                 enemeies.add(Enemy(enemy_pos, random.choice(enemy_types)))
                 p += 1
                 enemy_timer = 0
@@ -341,7 +331,27 @@ while running:
                 print(c_for_time)
                 minutos = c_for_time//3600
                 segundos = c_for_time//60 - minutos*60
-            
+            if user.class_chosen != "Caballero":
+                if shooting:
+                        if user.attack_timer >= user.attack_speed * fps:
+                            user.attack_timer = 0
+                            target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
+                            bullets.add(Projectile(user.position, target, user.proyectile_size, user.proyectile_speed, user.hitpoint, user.proyectile, 1000))
+                            shoot = False
+            else:
+                if shooting and not slash:
+                    if user.attack_timer >= user.attack_speed * fps:
+                        user.attack_timer = 0
+                        slash = True
+                        target = (pygame.mouse.get_pos()[0] + camera_left_top[0], pygame.mouse.get_pos()[1] + camera_left_top[1])
+                        angle = math.degrees(math.atan2(user.position[1] - target[1], user.position[0] - target[0]))
+                        pos = (user.relative_pos[0] - 50 * math.cos(math.radians(angle)), user.relative_pos[1] - 50 * math.sin(math.radians(angle)))
+
+                        slash_img = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("Graphics/Clases/proyectiles/slash.png")\
+                            .convert_alpha(), (75, 75)), angle)
+                        slash_rect = slash_img.get_rect(center = pos)
+                        slash_count = 0
+                        shoot = False
             
             enemeies.update(user)
             bullets.update()

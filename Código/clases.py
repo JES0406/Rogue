@@ -9,6 +9,7 @@ class Player(pygame.sprite.Sprite):
         self.animation_frame = 0
         self.sprite_moving = 'None'
         self.facing = 0
+        self.attack_timer = 0
         self.position = [ANCHO//2, ALTO//2]
         self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
         self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
@@ -16,7 +17,9 @@ class Player(pygame.sprite.Sprite):
         self.class_chosen = class_chosen
         self.frame = 0
         if self.class_chosen == "Caballero": 
+            self.attack_speed = 0.25 ## tiempo entre ataques (s)
             self.weapon = 0
+            self.weapon_sprite = 'knight'
             self.speed = 4
             self.MaxHP = 100
             self.hitpoint = 10
@@ -28,7 +31,9 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_speed = 0
             self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Knight\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Mago": 
+            self.attack_speed = 0.6 ## tiempo entre ataques (s)
             self.weapon = 1
+            self.weapon_sprite = 'mage'
             self.speed = 2
             self.MaxHP = 60
             self.hitpoint = 20
@@ -40,9 +45,11 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_speed = 10
             self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Wizzard\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Arquero": 
+            self.attack_speed = 0.25 ## tiempo entre ataques (s)
             self.weapon = 2
+            self.weapon_sprite = 'archer'
             self.speed = 6
-            self.MaxHP = 0
+            self.MaxHP = 40
             self.hitpoint = 20
             self.HPregen = 0.05
             self.range = 60
@@ -52,7 +59,9 @@ class Player(pygame.sprite.Sprite):
             self.proyectile_speed = 10
             self.death_sheet = pygame.image.load("Pixel Crawler-FREE-1.8\Heroes\Rogue\Death\Death-Sheet.png").convert_alpha()
         elif self.class_chosen == "Curandero": 
+            self.attack_speed = 0.35 ## tiempo entre ataques (s)
             self.weapon = 3
+            self.weapon_sprite = 'healer'
             self.speed = 4
             self.MaxHP = 80
             self.hitpoint = 5
@@ -96,8 +105,6 @@ class Player(pygame.sprite.Sprite):
             elif choice == "Damage":
                 self.hitpoint += 100
             
-            
-
     def exp_bar(self):
         try:
             pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
@@ -145,6 +152,8 @@ class Player(pygame.sprite.Sprite):
             self.image = death_frames[int(frame)]
             
     def update(self):
+        if self.attack_timer < self.attack_speed * fps:
+            self.attack_timer += 1
         if self.HP <= 0:
             self.HP = 0
             self.death_animation(int(self.frame))
@@ -161,6 +170,16 @@ class Player(pygame.sprite.Sprite):
             else: self.image = fn.chosen_sprite(self.class_chosen,1 + self.animation_frame//ticks_per_frame)
             self.relative_pos = [fn.relative_pos(self.position,0), fn.relative_pos(self.position,1)]
             self.rect = self.image.get_rect(center = (self.relative_pos[0], self.relative_pos[1]))
+            self.weapon_a = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/weapon_{self.weapon_sprite}.png").convert_alpha(), (40, 80))
+            self.offhand_a = pygame.transform.scale(pygame.image.load(f"Graphics/Clases/new_animation/offhand_{self.weapon_sprite}.png").convert_alpha(), (40, 80))
+            if pygame.mouse.get_pos()[0] < self.relative_pos[0]:
+                screen.blit(self.weapon_a,(self.relative_pos[0]+15, self.relative_pos[1]-30))
+                screen.blit(self.offhand_a, (self.relative_pos[0]-50, self.relative_pos[1]-30))
+            else:
+                self.weapon_a = pygame.transform.flip(self.weapon_a, True, False)
+                self.offhand_a = pygame.transform.flip(self.offhand_a, True, False)
+                screen.blit(self.weapon_a,(self.relative_pos[0]-50, self.relative_pos[1]-30))
+                screen.blit(self.offhand_a, (self.relative_pos[0]+15, self.relative_pos[1]-30))
             self.health_bar()
             self.mana_bar()
             if self.HP < self.MaxHP:
