@@ -9,6 +9,9 @@ pygame.display.set_caption("iMAT") #Título
 
 
 def hide():
+    """Oculta un triangulo en la esquina inferior derecha de la pantalla
+    """
+
     global show, contador
     if contador != fps:
         if contador == fps//2:
@@ -17,12 +20,22 @@ def hide():
     else:
         contador = 0
         show = not show
-def draw_minimap(user):
+def draw_minimap(user: Player):
+    '''Dibuja el minimapa en la esquina superior izquierda de la pantalla con la posición relativa del jugador
+    Input: user
+    Output: None
+    Raises: None
+    '''
     pygame.draw.rect(screen, 'White', pygame.Rect(0,0,ANCHO / 4 + 2, ALTO / 4 +2))
     pygame.draw.rect(screen, 'Black', pygame.Rect(0,0,ANCHO / 4, ALTO / 4))
     pygame.draw.rect(screen, color_green, pygame.Rect(user.position[0]/8,user.position[1]/8,user.size[0]/8, user.size[0]/8))
 
-def divide_str(string):
+def divide_str(string: str):
+    """Divide un string en una lista de strings de tamaño máximo 50
+    Input: string
+    Output: string_separated
+    Raises: None
+    """
     string_separated = []
     c = 0
     termine = False
@@ -64,13 +77,19 @@ class Bush(pygame.sprite.Sprite):
 
     def update(self):
         self.rect = self.image.get_rect(center = (fn.relative_pos(self.pos, 0), fn.relative_pos(self.pos, 1)))
-while len(bushes) < 100:
-    bush = Bush(random.choice(["1", "2", "3"]))
-    if not pygame.sprite.spritecollideany(bush, bushes):  
-        bushes.add(bush)
-    print(len(bushes))
-    
-        
+
+def create_bushes(count: int, bushes: pygame.sprite.Group):
+    """Crea los arbustos en el mapa
+    Input: count
+    Output: bushes
+    Raises: None
+    """
+    while len(bushes) < count:
+        bush = Bush(random.choice(["1", "2", "3"]))
+        if not pygame.sprite.spritecollideany(bush, bushes):  
+            bushes.add(bush)
+    return bushes
+bushes = create_bushes(300, bushes)
     
 
 
@@ -178,7 +197,7 @@ while running:
     if inicio_state:
         fn.background("inicio")
         fn.text_box(show)
-        fn.admins(True, (400, 500), True, (400, 500))
+        fn.admins(True, True, (400, 500), (400, 500))
         fn.text(f"Hola, somos Marcos y Javi, los creadores de este juego.", (100, 530),20)
         fn.text(f"Esperamos que te guste.", (100, 550), 20)
         fn.text(f"Presiona ENTER para continuar.", (100, 570), 20)
@@ -192,7 +211,7 @@ while running:
             fn.text_box(show)
             fn.text(f"Tras pulsar en la clase que quieras podrás empezar", (100, 530),20)
             button_list = fn.classes()
-            fn.admins(True,(600, 500), False, (0, 500)) 
+            fn.admins(True, False, (600, 500), (0, 500)) 
             for button in button_list:
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
@@ -204,7 +223,7 @@ while running:
         elif escena == 2:
             fn.background("class")
             fn.text_box(show)
-            fn.admins(False, (0, 500), True, (600, 500))
+            fn.admins(False, True, (0, 500), (600, 500))
             fn.text(f"OsTrAs...", (100, 550), 60)
             fn.text(f"Casi se nos olvida.", (350, 560), 20)
             fn.text(f"Clase: {clase}", (150, 150), 20)
@@ -328,7 +347,6 @@ while running:
             player.update()
             if user.frame >= 6:
                 death_state = True
-                print(c_for_time)
                 minutos = c_for_time//3600
                 segundos = c_for_time//60 - minutos*60
             if user.class_chosen != "Caballero":
@@ -392,7 +410,6 @@ while running:
                     text_group.add(Texto(creditos[i], (ANCHO//2, ALTO + 70*i), 70, 1))
             text_group.update()
             text_group.draw(screen)
-            print(text_group.sprites()[-1].size)
             if text_group.sprites()[-1].size == 0:
                 text_group.empty()
                 escena = 2

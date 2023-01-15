@@ -56,6 +56,7 @@ enemeies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 text_group = pygame.sprite.Group()
 bushes = pygame.sprite.Group()
+chests = pygame.sprite.Group()
 
 choice = ""
 enemy_timer = 0

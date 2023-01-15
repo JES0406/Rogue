@@ -83,29 +83,36 @@ class Player(pygame.sprite.Sprite):
 
         
     def health_bar(self):
+        '''Dibuja la barra de vida'''
         pygame.draw.rect(screen, color_red, (self.rect.x, self.rect.y - 10, self.rect.width, 5))
         pygame.draw.rect(screen, color_green, (self.rect.x, self.rect.y - 10, self.rect.width * (self.HP/self.MaxHP), 5))
 
     def mana_bar(self):
+        '''Dibuja la barra de mana'''
         try:
             pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 5, self.rect.width, 5))
             pygame.draw.rect(screen, color_blue, (self.rect.x, self.rect.y - 5, self.rect.width * (self.Mana/self.MaxMana), 5))
         except ZeroDivisionError:
             pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 5, self.rect.width, 5))
 
-    def level_up(self, choice):
-            if choice == "HP":
-                self.MaxHP += 10
-                self.HPregen += 0.01
-            elif choice == "Mana":
-                self.MaxMana += 10
-                self.Manaregen += 0.01
-            elif choice == "Speed":
-                self.speed+= 0.2
-            elif choice == "Damage":
-                self.hitpoint += 100
+    def level_up(self, choice: str):
+        '''Sube de nivel
+        Input: choice (str) - atributo a subir
+        Output: None
+        '''
+        if choice == "HP":
+            self.MaxHP += 10
+            self.HPregen += 0.01
+        elif choice == "Mana":
+            self.MaxMana += 10
+            self.Manaregen += 0.01
+        elif choice == "Speed":
+            self.speed+= 0.2
+        elif choice == "Damage":
+            self.hitpoint += 100
             
     def exp_bar(self):
+        '''Dibuja la barra de experiencia'''
         try:
             pygame.draw.rect(screen, color_black, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
             pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width * (self.exp/self.exp_to_level), 5))
@@ -113,6 +120,7 @@ class Player(pygame.sprite.Sprite):
             pygame.draw.rect(screen, color_white, (self.rect.x, self.rect.y - 15, self.rect.width, 5))
     
     def movement(self):
+        '''Movimiento del jugador con teclado'''
         if pygame.key.get_pressed()[pygame.K_w] or pygame.key.get_pressed()[pygame.K_UP]:
             mov_u = True
             self.sprite_moving = 'Right'
@@ -146,7 +154,8 @@ class Player(pygame.sprite.Sprite):
         if mov_u and self.position[1] > 0: self.position[1] -= movespeed
         elif mov_d and self.position[1] < mapheight - self.size[1]: self.position[1] += movespeed
 
-    def death_animation(self, frame):
+    def death_animation(self, frame: float):
+        '''Animación de muerte'''
         death_frames = fn.frame_list_maker(self.death_sheet, self.death_size, color_black_1, 6)
         if frame < 6:
             self.image = death_frames[int(frame)]
@@ -244,8 +253,11 @@ class Enemy(pygame.sprite.Sprite):
         self.size = self.image.get_size()
         self.range += self.size[0]
         
-    def move(self, player):
-        # move towards player but stay in range
+    def move(self, player: Player):
+        '''Moves the enemy towards the player
+        Input: Player object
+        Output: None
+        '''
         distance = fn.calc_distance(player.position, self.position)
         if distance < self.range: 
             speed_vector = -self.speed
@@ -255,7 +267,11 @@ class Enemy(pygame.sprite.Sprite):
             self.position[0] += speed_vector * (player.position[0]-self.position[0])/(distance)
             self.position[1] += speed_vector * (player.position[1]-self.position[1])/(distance)
 
-    def attack(self, player):
+    def attack(self, player: Player):
+        '''Shoots a projectile at the player
+        Input: Player object
+        Output: None
+        '''
         global enemy_bullets
         if self.type == "Melee":
             if fn.calc_distance(self.relative_pos, player.relative_pos) <= self.range + self.size[0]:
@@ -297,9 +313,6 @@ class Projectile(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, -self.angle * 180 / math.pi)
 
         self.rect = self.image.get_rect(center = (self.position[0], self.position[1]))
-        
-        
-        
 
     def update(self):
 
@@ -325,7 +338,7 @@ class Texto(pygame.sprite.Sprite):
         self.speed = speed
         self.size = size
     
-    def change_speed(self, speed):
+    def change_speed(self, speed: int):
         self.speed = speed
 
     def update(self):
@@ -333,7 +346,6 @@ class Texto(pygame.sprite.Sprite):
             self.size = (self.pos[1])/6
             if self.size < 0:
                 self.size = 0
-        print(self.size)
         self.fuente = pygame.font.Font("Fuentes/starjedi/Starjedi.ttf", int(self.size))
         self.text = self.fuente.render(self.string, False, color_yellow_2)
         self.image = self.text
@@ -341,3 +353,25 @@ class Texto(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center = self.pos)
         screen.blit(self.image, self.rect)
+
+class Chest( pygame.sprite.Sprite ):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(pygame.image.load("Graphics\Clases\chest.png"), (64,64))
+        self.closed_image = self.image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.open = False
+        self.open_image = pygame.transform.scale(pygame.image.load("Graphics\Clases\chest_open.png"), (64,64))
+        self.count = 0
+    def update(self):
+        if self.count == 60:
+            self.open = not self.open
+            self.count = 0
+        if self.open:
+            self.image = self.open_image
+        else:
+            self.image = self.closed_image
+
+        self.count += 1
